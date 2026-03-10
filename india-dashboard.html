@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="DAOL Investment India Economic & Peer Valuation Dashboard — Macro analysis, peer comparison, and factor-based investment scoring for the Indian equity market.">
+  <title>DAOL Investment — India Economic & Peer Valuation Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-brand">
+        <div class="header-logo">D</div>
+        <div>
+          <h1>DAOL Investment</h1>
+          <div class="header-sub">India Economic & Peer Valuation Dashboard</div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="country-tabs">
+          <button class="country-tab active" id="btn-india" onclick="setCountry('india')">🇮🇳 India</button>
+          <button class="country-tab" id="btn-israel" onclick="setCountry('israel')">🇮🇱 Israel</button>
+        </div>
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Toggle theme">◑</button>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs" id="main-tabs">
+      <button class="tab active" id="tab-overview" onclick="setTab('overview',this)">Overview</button>
+      <button class="tab" id="tab-macro" onclick="setTab('macro',this)">Macro</button>
+      <button class="tab" id="tab-external" onclick="setTab('external',this)">External</button>
+      <button class="tab" id="tab-peers" onclick="setTab('peers',this)">Peers</button>
+      <button class="tab" id="tab-analysis" onclick="setTab('analysis',this)">Analysis</button>
+    </div>
+
+    <!-- ═══════════ OVERVIEW ═══════════ -->
+    <div class="section active" id="sec-overview">
+      <div class="metrics">
+        <div class="metric" id="m-nifty">
+          <div class="metric-label">Nifty 50</div>
+          <div class="metric-value">25,179</div>
+          <div class="metric-sub">Feb 2026</div>
+        </div>
+        <div class="metric" id="m-sensex">
+          <div class="metric-label">Sensex</div>
+          <div class="metric-value">81,287</div>
+        </div>
+        <div class="metric" id="m-pe">
+          <div class="metric-label">Nifty Fwd P/E</div>
+          <div class="metric-value" style="color:var(--blue)">20.0x</div>
+        </div>
+        <div class="metric" id="m-usdinr-top">
+          <div class="metric-label">USD/INR</div>
+          <div class="metric-value">91.0</div>
+        </div>
+        <div class="metric" id="m-fxres">
+          <div class="metric-label">FX Reserves</div>
+          <div class="metric-value" style="color:var(--green)">$728bn</div>
+        </div>
+        <div class="metric" id="m-premium-top">
+          <div class="metric-label">India vs EM</div>
+          <div class="metric-value" style="color:var(--amber)">+10%</div>
+          <div class="metric-sub">4Y low premium</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Nifty 50</div>
+            <div class="panel-sub">Monthly Close · Jan 2022 — Feb 2026</div>
+          </div>
+          <span class="panel-badge" style="background:var(--green-bg);color:var(--green)">▲ 45.2%</span>
+        </div>
+        <div class="chart-wrap"><canvas id="c-nifty"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">GDP Growth</div>
+            <div class="panel-sub">Quarterly YoY %</div>
+          </div>
+          <span class="panel-badge" style="background:var(--blue-bg);color:var(--blue)">Latest: 7.8%</span>
+        </div>
+        <div class="chart-wrap sm"><canvas id="c-gdp"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══════════ MACRO ═══════════ -->
+    <div class="section" id="sec-macro">
+      <div class="metrics">
+        <div class="metric" id="m-pmi-mfg">
+          <div class="metric-label">Mfg PMI</div>
+          <div class="metric-value" style="color:var(--green)">56.9</div>
+        </div>
+        <div class="metric" id="m-pmi-svc">
+          <div class="metric-label">Svc PMI</div>
+          <div class="metric-value" style="color:var(--green)">58.1</div>
+        </div>
+        <div class="metric" id="m-cpi-top">
+          <div class="metric-label">CPI</div>
+          <div class="metric-value">4.20%</div>
+        </div>
+        <div class="metric" id="m-iip-top">
+          <div class="metric-label">IIP YoY</div>
+          <div class="metric-value">4.83%</div>
+        </div>
+        <div class="metric" id="m-repo-top">
+          <div class="metric-label">Repo Rate</div>
+          <div class="metric-value" style="color:var(--purple)">5.25%</div>
+        </div>
+        <div class="metric" id="m-unemp-top">
+          <div class="metric-label">Unemployment</div>
+          <div class="metric-value">8.0%</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">India CPI Inflation</div>
+            <div class="panel-sub">Consumer Price Index YoY % · RBI target: 4% ± 2%</div>
+          </div>
+          <span class="panel-badge" style="background:var(--green-bg);color:var(--green)">In Target</span>
+        </div>
+        <div class="chart-wrap"><canvas id="c-cpi"></canvas></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">PMI — Mfg & Services</div>
+              <div class="panel-sub">>50 = Expansion</div>
+            </div>
+          </div>
+          <div class="chart-wrap xs"><canvas id="c-pmi"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">IIP — Industrial Production</div>
+              <div class="panel-sub">YoY % Change</div>
+            </div>
+          </div>
+          <div class="chart-wrap xs"><canvas id="c-iip"></canvas></div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Unemployment Rate</div>
+              <div class="panel-sub">CMIE Monthly %</div>
+            </div>
+          </div>
+          <div class="chart-wrap xs"><canvas id="c-unemp"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">RBI Repo Rate</div>
+              <div class="panel-sub">Policy Rate %</div>
+            </div>
+          </div>
+          <div class="chart-wrap xs"><canvas id="c-repo"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ EXTERNAL ═══════════ -->
+    <div class="section" id="sec-external">
+      <div class="metrics">
+        <div class="metric" id="m-brent">
+          <div class="metric-label">Brent Crude</div>
+          <div class="metric-value">$73/bbl</div>
+        </div>
+        <div class="metric" id="m-gold">
+          <div class="metric-label">Gold</div>
+          <div class="metric-value" style="color:var(--amber)">$2,860/oz</div>
+        </div>
+        <div class="metric" id="m-usdinr2">
+          <div class="metric-label">USD/INR</div>
+          <div class="metric-value">91.0</div>
+        </div>
+        <div class="metric" id="m-fii">
+          <div class="metric-label">FII Net</div>
+          <div class="metric-value" style="color:var(--red)">-$601mn</div>
+        </div>
+        <div class="metric" id="m-cad">
+          <div class="metric-label">CAD % GDP</div>
+          <div class="metric-value">-0.40%</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Brent Crude Oil</div>
+              <div class="panel-sub">USD/barrel</div>
+            </div>
+          </div>
+          <div class="chart-wrap sm"><canvas id="c-brent"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Gold</div>
+              <div class="panel-sub">USD/oz</div>
+            </div>
+          </div>
+          <div class="chart-wrap sm"><canvas id="c-gold"></canvas></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">FII/FPI Net Monthly Flow</div>
+            <div class="panel-sub">USD Million</div>
+          </div>
+          <span class="panel-badge" style="background:var(--red-bg);color:var(--red)">Net Outflow</span>
+        </div>
+        <div class="chart-wrap"><canvas id="c-fii"></canvas></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">USD/INR</div>
+              <div class="panel-sub">Exchange Rate</div>
+            </div>
+          </div>
+          <div class="chart-wrap xs"><canvas id="c-usdinr"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Current Account</div>
+              <div class="panel-sub">% GDP</div>
+            </div>
+          </div>
+          <div class="chart-wrap xs"><canvas id="c-cad"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ PEERS ═══════════ -->
+    <div class="section" id="sec-peers">
+      <div class="metrics">
+        <div class="metric" id="m-pe-india">
+          <div class="metric-label">India Fwd P/E</div>
+          <div class="metric-value">20.0x</div>
+        </div>
+        <div class="metric" id="m-pe-em">
+          <div class="metric-label">MSCI EM</div>
+          <div class="metric-value" style="color:var(--green)">18.1x</div>
+        </div>
+        <div class="metric" id="m-pe-china">
+          <div class="metric-label">MSCI China</div>
+          <div class="metric-value" style="color:var(--red)">13.6x</div>
+        </div>
+        <div class="metric" id="m-pe-sp">
+          <div class="metric-label">S&P 500</div>
+          <div class="metric-value" style="color:var(--blue)">21.9x</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Forward P/E — Global Peers</div>
+            <div class="panel-sub">Bloomberg Consensus · Excludes Mirae Target ETF</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="c-fwdpe"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">India Premium vs MSCI EM</div>
+            <div class="panel-sub">Forward P/E Premium % — Compressed from 92% to 10%</div>
+          </div>
+          <span class="panel-badge" style="background:var(--amber-bg);color:var(--amber)">4Y Low</span>
+        </div>
+        <div class="chart-wrap sm"><canvas id="c-premium"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Normalized Performance</div>
+            <div class="panel-sub">Base=100 at Jan 2022</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="c-norm"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══════════ ANALYSIS ═══════════ -->
+    <div class="section" id="sec-analysis">
+      <div class="decision-box" id="decision-box">
+        <div class="decision-label">Investment Decision — DAOL-Bharat / Mirae India Midcap</div>
+        <div class="decision-value">SLIGHTLY OVERWEIGHT</div>
+        <div class="decision-score">Composite Score: +0.64 / 2.00</div>
+        <div style="margin-top:16px">
+          <div class="gauge-container">
+            <span class="gauge-pointer" style="color:var(--red)">UW</span>
+            <div class="gauge-scale">
+              <div class="gauge-seg" style="background:linear-gradient(90deg,#EF4444,#F97316)"></div>
+              <div class="gauge-seg" style="background:linear-gradient(90deg,#F97316,#F59E0B)"></div>
+              <div class="gauge-seg" style="background:linear-gradient(90deg,#94A3B8,#94A3B8)"></div>
+              <div class="gauge-seg" style="background:linear-gradient(90deg,#34D399,#10B981)"></div>
+              <div class="gauge-seg" style="background:linear-gradient(90deg,#10B981,#059669)"></div>
+            </div>
+            <span class="gauge-pointer" style="color:var(--green)">OW</span>
+          </div>
+          <div style="text-align:center;margin-top:6px;font-size:11px;color:var(--muted);font-weight:500">▲ Current:
+            +0.64 (Slightly Overweight zone: +0.5 to +1.5)</div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-nifty-model">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Econometric Model — Factor Impact on Nifty Returns</div>
+            <div class="panel-sub">OLS Regression · Standardized Coefficients · R² = 0.865 · Quarterly 2022–2025</div>
+          </div>
+          <span class="panel-badge" style="background:var(--green-bg);color:var(--green)">R² 0.865</span>
+        </div>
+        <div style="padding:8px 0">
+          <div class="bar-row">
+            <div class="bar-label">IIP</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:89%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
+            </div>
+            <div class="bar-val" style="color:var(--green)">+4.45</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">PMI</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:44%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
+            </div>
+            <div class="bar-val" style="color:var(--green)">+2.21</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">FII Flow</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:25%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
+            </div>
+            <div class="bar-val" style="color:var(--green)">+1.27</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">CPI</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:16%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
+            </div>
+            <div class="bar-val" style="color:var(--green)">+0.82</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Gold Δ</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:3%;background:var(--red)"></div>
+            </div>
+            <div class="bar-val" style="color:var(--muted)">-0.17</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Repo Rate</div>
+            <div class="bar-track">
+              <div class="bar-fill"
+                style="width:81%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+            </div>
+            <div class="bar-val" style="color:var(--red)">-4.03</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Brent Δ</div>
+            <div class="bar-track">
+              <div class="bar-fill"
+                style="width:85%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+            </div>
+            <div class="bar-val" style="color:var(--red)">-4.24</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">GDP</div>
+            <div class="bar-track">
+              <div class="bar-fill"
+                style="width:94%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+            </div>
+            <div class="bar-val" style="color:var(--red)">-4.68</div>
+          </div>
+        </div>
+        <div class="insight-box">
+          <strong>Model Interpretation:</strong> IIP (industrial production) and PMI are the strongest positive drivers
+          of Nifty returns. Rising Brent crude prices and higher repo rates are the biggest drags. The negative GDP
+          coefficient is counter-intuitive — it captures the "sell the news" effect where high GDP prints often coincide
+          with peak expectations and subsequent rotation. FII flows show moderate but consistent positive impact.
+        </div>
+      </div>
+
+      <div class="panel" id="panel-mirae-model">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Mirae India Midcap — Factor Sensitivity</div>
+            <div class="panel-sub">OLS Regression · R² = 0.666</div>
+          </div>
+          <span class="panel-badge" style="background:var(--amber-bg);color:var(--amber)">R² 0.666</span>
+        </div>
+        <div style="padding:8px 0">
+          <div class="bar-row">
+            <div class="bar-label">IIP</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:100%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
+            </div>
+            <div class="bar-val" style="color:var(--green)">+6.44</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">PMI</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:89%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
+            </div>
+            <div class="bar-val" style="color:var(--green)">+5.71</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">CPI</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:80%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
+            </div>
+            <div class="bar-val" style="color:var(--green)">+5.11</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">FII Flow</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:12%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
+            </div>
+            <div class="bar-val" style="color:var(--green)">+0.76</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Repo Rate</div>
+            <div class="bar-track">
+              <div class="bar-fill"
+                style="width:60%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+            </div>
+            <div class="bar-val" style="color:var(--red)">-3.86</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Brent Δ</div>
+            <div class="bar-track">
+              <div class="bar-fill"
+                style="width:60%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+            </div>
+            <div class="bar-val" style="color:var(--red)">-3.88</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Gold Δ</div>
+            <div class="bar-track">
+              <div class="bar-fill"
+                style="width:62%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+            </div>
+            <div class="bar-val" style="color:var(--red)">-4.01</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">GDP</div>
+            <div class="bar-track">
+              <div class="bar-fill"
+                style="width:100%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+            </div>
+            <div class="bar-val" style="color:var(--red)">-6.80</div>
+          </div>
+        </div>
+        <div class="insight-box">
+          <strong>Midcap Insight:</strong> Mirae India Midcap shows higher sensitivity to IIP and PMI than the Nifty 50,
+          consistent with midcap stocks being more domestic-demand driven. Gold price changes are a bigger negative
+          factor for midcaps (-4.01 vs -0.17 for Nifty), likely because gold rallies often coincide with risk-off
+          environments that hit midcaps harder.
+        </div>
+      </div>
+
+      <div class="panel" id="panel-scoring">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Current Factor Scoring</div>
+            <div class="panel-sub">Score range: -2 (Very Bearish) to +2 (Very Bullish)</div>
+          </div>
+        </div>
+        <table class="factor-table" id="factor-table">
+          <thead>
+            <tr>
+              <th>Factor</th>
+              <th>Current</th>
+              <th>Score</th>
+              <th>Weight</th>
+              <th>Signal</th>
+              <th>Rationale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GDP Growth</td>
+              <td>7.8%</td>
+              <td><span class="score-pill score-pos">+1</span></td>
+              <td>15%</td>
+              <td style="color:var(--green)">Bullish</td>
+              <td style="color:var(--muted);font-size:11px">Above consensus 7.45%; strong expansion</td>
+            </tr>
+            <tr>
+              <td>CPI Inflation</td>
+              <td>4.20%</td>
+              <td><span class="score-pill score-pos">+1</span></td>
+              <td>10%</td>
+              <td style="color:var(--green)">Bullish</td>
+              <td style="color:var(--muted);font-size:11px">Within RBI 4±2% band; well controlled</td>
+            </tr>
+            <tr>
+              <td>Manufacturing PMI</td>
+              <td>56.9</td>
+              <td><span class="score-pill score-pos">+1</span></td>
+              <td>12%</td>
+              <td style="color:var(--green)">Bullish</td>
+              <td style="color:var(--muted);font-size:11px">Firmly in expansion territory >55</td>
+            </tr>
+            <tr>
+              <td>RBI Repo Rate</td>
+              <td>5.25%</td>
+              <td><span class="score-pill score-pos">+1</span></td>
+              <td>10%</td>
+              <td style="color:var(--green)">Bullish</td>
+              <td style="color:var(--muted);font-size:11px">Easing cycle active; 125bps cut from peak</td>
+            </tr>
+            <tr>
+              <td>FII/FPI Flow</td>
+              <td>-$601mn</td>
+              <td><span class="score-pill score-neg">-1</span></td>
+              <td>18%</td>
+              <td style="color:var(--red)">Bearish</td>
+              <td style="color:var(--muted);font-size:11px">Persistent outflows; largest weight drag</td>
+            </tr>
+            <tr>
+              <td>IIP (Industrial)</td>
+              <td>4.83%</td>
+              <td><span class="score-pill score-pos">+1</span></td>
+              <td>10%</td>
+              <td style="color:var(--green)">Bullish</td>
+              <td style="color:var(--muted);font-size:11px">Positive but decelerating from 8%+</td>
+            </tr>
+            <tr>
+              <td>Brent Crude</td>
+              <td>$73/bbl</td>
+              <td><span class="score-pill score-pos">+1</span></td>
+              <td>13%</td>
+              <td style="color:var(--green)">Bullish</td>
+              <td style="color:var(--muted);font-size:11px">Below $75 comfort zone for India</td>
+            </tr>
+            <tr>
+              <td>Gold</td>
+              <td>$2,860/oz</td>
+              <td><span class="score-pill score-pos">+1</span></td>
+              <td>12%</td>
+              <td style="color:var(--green)">Bullish</td>
+              <td style="color:var(--muted);font-size:11px">Elevated but stabilizing; not risk-off</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel" id="panel-thesis">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Investment Thesis Summary</div>
+          </div>
+        </div>
+        <div style="padding:8px 0;font-size:13px;line-height:1.9;color:var(--text2)">
+          <p><strong style="color:var(--text)">Recommendation: SLIGHTLY OVERWEIGHT</strong> — Composite score +0.64
+            falls in the Slightly Overweight band (+0.5 to +1.5).</p>
+          <p style="margin-top:14px"><strong style="color:var(--text)">Bull Case:</strong> 7 of 8 factors score
+            positively. Macro fundamentals are strong (GDP 7.8%, CPI controlled at 4.2%, PMI expansionary). RBI's easing
+            cycle provides tailwind. Brent crude at $73 is a sweet spot for India. Valuation premium vs EM at a 4-year
+            low (10%) suggests the de-rating is largely done.</p>
+          <p style="margin-top:14px"><strong style="color:var(--text)">Bear Case:</strong> FII outflows remain
+            persistent (-$601mn latest, negative for 8 of last 12 months). INR depreciation to 91 creates headwind for
+            USD-denominated returns. Mirae India Midcap Fund underperforming Nifty and EM since H2 2024, reflecting
+            midcap de-rating.</p>
+          <p style="margin-top:14px"><strong style="color:var(--text)">Key Risk:</strong> FII flow reversal is the swing
+            factor — carries 18% weight and is the only negative score. A shift from outflows to inflows would push
+            composite to ~1.0 (stronger overweight).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <span>Source: Bloomberg Terminal (DAOL Investment) · Supplementary: RBI, MOSPI, CMIE · Model: OLS Quarterly
+        2022–2025</span>
+      <span>DAOL-Bharat Fund · Analyst: Sharkky</span>
+    </div>
+
+  </div>
+
+  <script src="data.js"></script>
+  <script src="charts.js"></script>
+</body>
+
+</html>

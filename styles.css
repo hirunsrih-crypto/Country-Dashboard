@@ -1,0 +1,144 @@
+/* === DAOL Investment Dashboard — Premium Stylesheet === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#F8F9FC;--bg2:#EEF0F5;--card:#FFFFFF;--card-hover:#FAFBFF;
+  --border:#E2E5ED;--border-light:#ECEEF4;
+  --text:#0F172A;--text2:#334155;--muted:#64748B;--dim:#94A3B8;
+  --accent:#4F46E5;--accent2:#6366F1;--accent-glow:rgba(79,70,229,.12);
+  --green:#10B981;--green-bg:rgba(16,185,129,.08);
+  --red:#EF4444;--red-bg:rgba(239,68,68,.08);
+  --blue:#3B82F6;--blue-bg:rgba(59,130,246,.08);
+  --amber:#F59E0B;--amber-bg:rgba(245,158,11,.08);
+  --purple:#8B5CF6;--purple-bg:rgba(139,92,246,.08);
+  --pink:#EC4899;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --disp:'Playfair Display',Georgia,serif;
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  --shadow:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --shadow-md:0 4px 12px rgba(15,23,42,.08),0 2px 4px rgba(15,23,42,.04);
+  --shadow-lg:0 10px 30px rgba(15,23,42,.1),0 4px 8px rgba(15,23,42,.06);
+  --transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+
+[data-theme="dark"]{
+  --bg:#0B0F1A;--bg2:#111827;--card:#1A1F2E;--card-hover:#1F2537;
+  --border:#2A3042;--border-light:#232840;
+  --text:#F1F5F9;--text2:#CBD5E1;--muted:#94A3B8;--dim:#64748B;
+  --accent:#818CF8;--accent2:#A5B4FC;--accent-glow:rgba(129,140,248,.15);
+  --green:#34D399;--green-bg:rgba(52,211,153,.1);
+  --red:#F87171;--red-bg:rgba(248,113,113,.1);
+  --blue:#60A5FA;--blue-bg:rgba(96,165,250,.1);
+  --amber:#FBBF24;--amber-bg:rgba(251,191,36,.1);
+  --purple:#A78BFA;--purple-bg:rgba(167,139,250,.1);
+  --pink:#F472B6;
+  --shadow:0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 4px 12px rgba(0,0,0,.4);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.5);
+}
+
+/* === BASE === */
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6;transition:var(--transition);-webkit-font-smoothing:antialiased}
+::selection{background:var(--accent);color:#fff}
+.container{max-width:1280px;margin:0 auto;padding:0 24px}
+
+/* === HEADER === */
+.header{padding:20px 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-light)}
+.header-brand{display:flex;align-items:center;gap:14px}
+.header-logo{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;letter-spacing:-1px;box-shadow:0 2px 8px rgba(79,70,229,.3)}
+.header h1{font-family:var(--disp);font-size:24px;font-weight:600;color:var(--text);letter-spacing:-.5px}
+.header-sub{font-size:11px;color:var(--muted);letter-spacing:.5px;margin-top:1px}
+.controls{display:flex;gap:8px;align-items:center}
+.country-tabs{display:flex;gap:4px;background:var(--bg2);padding:3px;border-radius:var(--radius-sm)}
+.country-tab{padding:7px 16px;font-family:var(--sans);font-size:12px;font-weight:500;background:none;border:none;border-radius:var(--radius-xs);color:var(--muted);cursor:pointer;transition:var(--transition)}
+.country-tab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow)}
+.country-tab:hover:not(.active){color:var(--text)}
+.theme-toggle{width:36px;height:36px;border:1px solid var(--border);background:var(--card);border-radius:var(--radius-sm);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:var(--transition);color:var(--muted)}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+
+/* === TABS === */
+.tabs{display:flex;gap:2px;background:var(--bg2);padding:4px;border-radius:var(--radius);margin:20px 0 24px}
+.tab{flex:1;padding:10px 20px;font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.3px;background:none;border:none;border-radius:var(--radius-sm);color:var(--muted);cursor:pointer;transition:var(--transition);text-align:center}
+.tab.active{background:var(--card);color:var(--accent);box-shadow:var(--shadow);font-weight:600}
+.tab:hover:not(.active){color:var(--text)}
+
+/* === METRIC CARDS === */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.metric{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:16px 18px;transition:var(--transition);position:relative;overflow:hidden}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--purple));opacity:0;transition:var(--transition)}
+.metric:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);transform:translateY(-1px)}.metric:hover::before{opacity:1}
+.metric-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px}
+.metric-value{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.metric-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* === PANELS === */
+.panel{background:var(--card);border:1px solid var(--border-light);border-radius:var(--radius);padding:20px;margin-bottom:16px;transition:var(--transition)}
+.panel:hover{box-shadow:var(--shadow-md)}
+.panel-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.panel-title{font-family:var(--disp);font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.3px}
+.panel-sub{font-size:11px;color:var(--dim);margin-top:3px;letter-spacing:.2px}
+.panel-badge{font-size:10px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.5px}
+.chart-wrap{position:relative;height:280px}
+.chart-wrap.sm{height:220px}
+.chart-wrap.xs{height:180px}
+
+/* === GRID === */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:900px){.grid-3{grid-template-columns:1fr}}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}}
+
+/* === ANALYSIS — Factor Table === */
+.factor-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+.factor-table thead{position:sticky;top:0}
+.factor-table th{text-align:left;padding:10px 14px;color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--border);background:var(--card)}
+.factor-table td{padding:10px 14px;border-bottom:1px solid var(--border-light);transition:var(--transition)}
+.factor-table tr:hover td{background:var(--accent-glow)}
+.score-pill{display:inline-flex;align-items:center;justify-content:center;min-width:36px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.score-pos{background:var(--green-bg);color:var(--green)}
+.score-neg{background:var(--red-bg);color:var(--red)}
+.score-neu{background:var(--bg2);color:var(--dim)}
+
+/* === DECISION BOX === */
+.decision-box{text-align:center;padding:36px;background:linear-gradient(135deg,var(--accent-glow),var(--purple-bg));border:2px solid var(--accent);border-radius:var(--radius);margin:0 0 20px;position:relative;overflow:hidden}
+.decision-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 0%,var(--accent-glow),transparent 70%);pointer-events:none}
+.decision-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:3px;font-weight:600;margin-bottom:10px}
+.decision-value{font-family:var(--disp);font-size:36px;font-weight:700;letter-spacing:.5px;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.decision-score{font-size:14px;color:var(--muted);margin-top:8px;font-weight:500}
+
+/* === BAR CHART (Factor Impact) === */
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;padding:4px 0}
+.bar-row:hover{background:var(--accent-glow);border-radius:var(--radius-xs);margin-left:-8px;margin-right:-8px;padding:4px 8px}
+.bar-label{width:90px;font-size:11px;text-align:right;color:var(--muted);font-weight:500}
+.bar-track{flex:1;height:22px;background:var(--bg2);border-radius:var(--radius-xs);position:relative;overflow:hidden}
+.bar-fill{height:100%;border-radius:var(--radius-xs);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.bar-val{width:55px;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* === GAUGE === */
+.gauge-container{display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 0}
+.gauge-scale{display:flex;height:10px;border-radius:5px;overflow:hidden;width:400px;box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}
+.gauge-seg{flex:1}
+.gauge-pointer{font-size:11px;font-weight:600;color:var(--accent)}
+
+/* === INSIGHT BOX === */
+.insight-box{padding:16px 18px;border-left:3px solid var(--accent);background:var(--accent-glow);border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:16px 0;font-size:12px;color:var(--text2);line-height:1.8}
+.insight-box strong{color:var(--text)}
+
+/* === FOOTER === */
+.footer{padding:20px 0;border-top:1px solid var(--border-light);margin-top:24px;display:flex;justify-content:space-between;font-size:10px;color:var(--dim);letter-spacing:.3px}
+
+/* === SECTIONS === */
+.section{display:none;animation:fadeIn .3s ease}.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* === LOADING SHIMMER === */
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.loading{background:linear-gradient(90deg,var(--bg2) 25%,var(--card) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
