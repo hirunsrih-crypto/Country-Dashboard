@@ -492,6 +492,271 @@
         </div>
       </div>
 
+      <div class="panel" id="panel-factor-drivers">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Factor Driver Analysis — Top 5 Positive &amp; Negative Signals</div>
+            <div class="panel-sub">For each regression variable: conditions that push it bullish or bearish · Nifty &amp; Mirae models</div>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="factor-table" style="font-size:11.5px">
+            <thead>
+              <tr>
+                <th style="min-width:120px">Variable</th>
+                <th style="min-width:60px">Model / Coef</th>
+                <th style="min-width:260px;color:var(--green)">▲ Top 5 Positive Signals</th>
+                <th style="min-width:260px;color:var(--red)">▼ Top 5 Negative Signals</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- ── NIFTY MODEL ── -->
+              <tr style="background:var(--blue-bg)">
+                <td colspan="4" style="font-weight:700;color:var(--blue);font-size:11px;letter-spacing:.05em">NIFTY 50 MODEL · R² 0.865</td>
+              </tr>
+              <tr>
+                <td><strong>IIP</strong><br><span style="color:var(--muted);font-size:10px">Industrial Production YoY%</span></td>
+                <td style="color:var(--green);font-weight:700">+4.45</td>
+                <td style="color:var(--green)">
+                  1. Government capex acceleration (infra/PLI push)<br>
+                  2. Export order growth via global demand recovery<br>
+                  3. Manufacturing credit expansion from RBI easing<br>
+                  4. Pre-election public spending surge<br>
+                  5. Post-monsoon harvest-led consumption uptick
+                </td>
+                <td style="color:var(--red)">
+                  1. Input cost inflation squeezing margins/output<br>
+                  2. Power/energy shortage curtailing production<br>
+                  3. Monsoon failure reducing agro-industrial activity<br>
+                  4. Global demand slowdown hitting export orders<br>
+                  5. Credit crunch from bank NPA cycle tightening
+                </td>
+              </tr>
+              <tr>
+                <td><strong>PMI Mfg</strong><br><span style="color:var(--muted);font-size:10px">S&amp;P Global Mfg PMI</span></td>
+                <td style="color:var(--green);font-weight:700">+2.21</td>
+                <td style="color:var(--green)">
+                  1. New domestic orders expanding above 55<br>
+                  2. Export orders rising on global recovery<br>
+                  3. Employment sub-index turning positive<br>
+                  4. Input price stability enabling margin expansion<br>
+                  5. Inventory restocking cycle kicking in
+                </td>
+                <td style="color:var(--red)">
+                  1. Input cost spike (oil/commodity) compressing margins<br>
+                  2. New orders sub-index dropping below 50<br>
+                  3. Export orders falling on global recession<br>
+                  4. Policy/regulatory uncertainty freezing capex<br>
+                  5. Currency depreciation raising import input costs
+                </td>
+              </tr>
+              <tr>
+                <td><strong>FII Flow</strong><br><span style="color:var(--muted);font-size:10px">Net USD mn (monthly)</span></td>
+                <td style="color:var(--green);font-weight:700">+1.27</td>
+                <td style="color:var(--green)">
+                  1. India MSCI weight increase triggering passive inflows<br>
+                  2. EM allocation upgrade amid global risk-on<br>
+                  3. India sovereign/growth upgrade by global banks<br>
+                  4. INR stability reducing FX hedging costs<br>
+                  5. Valuation de-rating making India cheap vs EM peers
+                </td>
+                <td style="color:var(--red)">
+                  1. Fed rate hike cycle pulling capital to US<br>
+                  2. DXY rally triggering broad EM outflows<br>
+                  3. India-specific headline risk (election/geopolitical)<br>
+                  4. China stimulus-driven EM reallocation away from India<br>
+                  5. SEBI regulatory action spooking foreign participants
+                </td>
+              </tr>
+              <tr>
+                <td><strong>CPI Inflation</strong><br><span style="color:var(--muted);font-size:10px">YoY % (RBI target 4±2%)</span></td>
+                <td style="color:var(--green);font-weight:700">+0.82</td>
+                <td style="color:var(--green)">
+                  1. Good monsoon delivering bumper kharif/rabi harvest<br>
+                  2. Brent oil decline reducing fuel/transport inflation<br>
+                  3. RBI credibility anchoring expectations at 4%<br>
+                  4. Supply chain normalization easing goods prices<br>
+                  5. Government fuel subsidy or excise duty cut
+                </td>
+                <td style="color:var(--red)">
+                  1. Monsoon failure → food price shock (vegetables/pulses)<br>
+                  2. Oil price spike passing through to fuel &amp; transport<br>
+                  3. Broad commodity rally (metals, edible oils)<br>
+                  4. INR depreciation inflating import costs<br>
+                  5. RBI forced into emergency rate hikes above 6.5%
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Repo Rate Δ</strong><br><span style="color:var(--muted);font-size:10px">RBI Policy Rate</span></td>
+                <td style="color:var(--red);font-weight:700">−4.03</td>
+                <td style="color:var(--green)">
+                  1. RBI rate cut cycle (inflation below 4% threshold)<br>
+                  2. Fed pivot enabling EM central bank easing<br>
+                  3. Growth slowdown prompting pre-emptive cuts<br>
+                  4. Excess banking system liquidity → effective easing<br>
+                  5. BoP surplus reducing pressure on INR/rates
+                </td>
+                <td style="color:var(--red)">
+                  1. CPI >6% forcing emergency RBI tightening<br>
+                  2. Fed hawkish pivot pressuring RBI to follow<br>
+                  3. INR freefall requiring defensive rate hikes<br>
+                  4. Fiscal slippage raising sovereign risk premium<br>
+                  5. Global credit spread widening (risk-off tightening)
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Brent Crude Δ</strong><br><span style="color:var(--muted);font-size:10px">USD/barrel MoM%</span></td>
+                <td style="color:var(--red);font-weight:700">−4.24</td>
+                <td style="color:var(--green)">
+                  1. OPEC+ supply increase exceeding demand growth<br>
+                  2. US shale output surge capping price upside<br>
+                  3. Global demand slowdown (China PMI contraction)<br>
+                  4. Geopolitical resolution reducing risk premium<br>
+                  5. India switching to discounted Russian crude
+                </td>
+                <td style="color:var(--red)">
+                  1. OPEC+ production cut beyond market expectations<br>
+                  2. Middle East escalation threatening supply disruption<br>
+                  3. Russia-Ukraine conflict widening export restrictions<br>
+                  4. Seasonal demand surge (northern hemisphere winter)<br>
+                  5. USD weakening inflating dollar-denominated oil price
+                </td>
+              </tr>
+              <tr>
+                <td><strong>GDP Growth</strong><br><span style="color:var(--muted);font-size:10px">QoQ YoY% (sell-the-news)</span></td>
+                <td style="color:var(--red);font-weight:700">−4.68</td>
+                <td style="color:var(--green)">
+                  1. GDP miss → RBI easing / bottom-fishing rally<br>
+                  2. Slowdown triggering fiscal stimulus announcement<br>
+                  3. Below-consensus print creating valuation opportunity<br>
+                  4. Market front-running recovery before data confirms<br>
+                  5. Weak GDP reducing inflation → rate cut catalyst
+                </td>
+                <td style="color:var(--red)">
+                  1. Strong GDP print → "peak growth" sell-the-news<br>
+                  2. High GDP → RBI tightening to prevent overheating<br>
+                  3. Beat triggers profit-taking at stretched valuations<br>
+                  4. Strong growth priced in; forward guidance disappoints<br>
+                  5. GDP surge fuels inflation concerns, raising risk premium
+                </td>
+              </tr>
+              <!-- ── MIRAE MODEL ── -->
+              <tr style="background:var(--green-bg)">
+                <td colspan="4" style="font-weight:700;color:var(--green);font-size:11px;letter-spacing:.05em">MIRAE INDIA MIDCAP MODEL · R² 0.836</td>
+              </tr>
+              <tr>
+                <td><strong>Fwd P/E Δ</strong><br><span style="color:var(--muted);font-size:10px">Nifty BEST_PE monthly chg</span></td>
+                <td style="color:var(--green);font-weight:700">+7.50</td>
+                <td style="color:var(--green)">
+                  1. RBI rate cut compressing equity risk premium<br>
+                  2. FII inflow surge lifting sentiment and multiples<br>
+                  3. India MSCI reclassification / weight increase<br>
+                  4. Global de-rating recovery (EM re-rating cycle)<br>
+                  5. Domestic MF SIP acceleration sustaining demand
+                </td>
+                <td style="color:var(--red)">
+                  1. Fed tightening causing global P/E compression<br>
+                  2. FII sustained outflow cycle de-rating market<br>
+                  3. Earnings miss triggering multiple contraction<br>
+                  4. INR depreciation raising real cost of equity<br>
+                  5. Geopolitical shock collapsing risk appetite globally
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Fwd EPS Rev.</strong><br><span style="color:var(--muted);font-size:10px">Nifty BEST_EPS MoM%</span></td>
+                <td style="color:var(--green);font-weight:700">+5.26</td>
+                <td style="color:var(--green)">
+                  1. GDP beat → analyst consensus upgrade cycle<br>
+                  2. GST collection record high signalling demand<br>
+                  3. Commodity cost deflation expanding margins<br>
+                  4. INR stability reducing forex loss provisions<br>
+                  5. PLI scheme driving sector-level earnings upgrades
+                </td>
+                <td style="color:var(--red)">
+                  1. GDP miss below 6% → broad earnings downgrade<br>
+                  2. Monsoon failure → agri/FMCG/rural consumption hit<br>
+                  3. NBFC/bank NPA spike forcing provisioning surge<br>
+                  4. Input cost inflation compressing net margins<br>
+                  5. Rupee depreciation raising import cost provisions
+                </td>
+              </tr>
+              <tr>
+                <td><strong>INR/USD Δ</strong><br><span style="color:var(--muted);font-size:10px">USD/INR MoM% (↑ = INR weak)</span></td>
+                <td style="color:var(--red);font-weight:700">−1.51</td>
+                <td style="color:var(--green)">
+                  1. FII equity inflows absorbing USD supply<br>
+                  2. RBI FX intervention defending INR floor<br>
+                  3. Current account improvement (oil price fall)<br>
+                  4. Software/remittance inflows boosting BoP<br>
+                  5. Fed rate cut weakening dollar broadly
+                </td>
+                <td style="color:var(--red)">
+                  1. FII sustained equity/debt outflows<br>
+                  2. Oil price surge widening current account deficit<br>
+                  3. Fed hawkish pivot driving DXY rally<br>
+                  4. EM contagion (Turkey/Argentina spillover)<br>
+                  5. India fiscal slippage raising sovereign risk
+                </td>
+              </tr>
+              <tr>
+                <td><strong>US 10Y Yield Δ</strong><br><span style="color:var(--muted);font-size:10px">Monthly bps change</span></td>
+                <td style="color:var(--green);font-weight:700">+0.46</td>
+                <td style="color:var(--green)">
+                  1. US 10Y rising on strong growth (risk-on decoupling)<br>
+                  2. Soft-landing narrative sustaining global risk appetite<br>
+                  3. India growth outperforming even as US rates rise<br>
+                  4. Rates rising due to inflation — not recessionary<br>
+                  5. India fiscal stability limiting contagion from US rates
+                </td>
+                <td style="color:var(--red)">
+                  1. US 10Y falling on recession fears (risk-off)<br>
+                  2. Flight-to-safety collapsing EM equity allocations<br>
+                  3. Fed aggressive hike surprise (>25bps shock)<br>
+                  4. US credit spread widening triggering global deleveraging<br>
+                  5. Yield inversion signalling US slowdown → EM outflows
+                </td>
+              </tr>
+              <tr>
+                <td><strong>IIP</strong><br><span style="color:var(--muted);font-size:10px">Industrial Production YoY%</span></td>
+                <td style="color:var(--green);font-weight:700">+0.30</td>
+                <td style="color:var(--green)">
+                  1. Manufacturing capex cycle (PLI/infra) driving output<br>
+                  2. Urban consumption driving consumer durables output<br>
+                  3. Government defence/railway spending stimulating<br>
+                  4. Festive season boosting consumer goods production<br>
+                  5. Export recovery adding to capacity utilisation
+                </td>
+                <td style="color:var(--red)">
+                  1. Demand destruction from high interest rates<br>
+                  2. Power shortage/energy policy disrupting output<br>
+                  3. Inventory glut suppressing new production orders<br>
+                  4. Global supply chain disruption (semiconductors)<br>
+                  5. Weak rural demand from poor monsoon season
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Credit Growth</strong><br><span style="color:var(--muted);font-size:10px">Bank credit YoY%</span></td>
+                <td style="color:var(--green);font-weight:700">+0.20</td>
+                <td style="color:var(--green)">
+                  1. RBI rate cut cycle accelerating retail/MSME lending<br>
+                  2. NBFC sector recovery (post-IL&FS normalisation)<br>
+                  3. Government MSME credit guarantee schemes<br>
+                  4. Consumer credit expanding with income growth<br>
+                  5. Bank recapitalisation enabling balance sheet expansion
+                </td>
+                <td style="color:var(--red)">
+                  1. RBI tightening → prime lending rate increase<br>
+                  2. Rising NPAs triggering bank risk aversion<br>
+                  3. Basel III / IRAC norms tightening credit standards<br>
+                  4. Corporate deleveraging reducing loan demand<br>
+                  5. Shadow banking (NBFC) stress crimping credit supply
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="panel" id="panel-scoring">
         <div class="panel-header">
           <div>
