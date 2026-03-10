@@ -236,5 +236,121 @@ function initCharts() {
     ], { dots: true, yOpts: { min: 50, max: 170 } });
 }
 
+// === LIVE METRIC CARDS (from D.latest) ===
+function updateMetrics() {
+    const L = D.latest;
+    if (!L) return;
+
+    // Helper: set inner HTML of element by id if it exists
+    function set(id, html) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+    }
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) {
+            const valEl = el.querySelector('.metric-value');
+            if (valEl) valEl.textContent = text;
+        }
+    }
+
+    // Overview metrics
+    if (L.nifty) set('m-nifty', `<div class="metric-label">Nifty 50</div><div class="metric-value">${L.nifty.toLocaleString()}</div><div class="metric-sub">Live (yfinance)</div>`);
+    if (L.sensex) set('m-sensex', `<div class="metric-label">Sensex</div><div class="metric-value">${L.sensex.toLocaleString()}</div>`);
+    if (L.usdinr) set('m-usdinr-top', `<div class="metric-label">USD/INR</div><div class="metric-value">${L.usdinr.toFixed(2)}</div>`);
+
+    // External metrics
+    if (L.brent) {
+        const col = L.brent > 95 ? 'var(--red)' : L.brent > 85 ? 'var(--amber)' : 'var(--green)';
+        set('m-brent', `<div class="metric-label">Brent Crude</div><div class="metric-value" style="color:${col}">$${Math.round(L.brent)}/bbl</div>`);
+    }
+    if (L.gold) {
+        set('m-gold', `<div class="metric-label">Gold</div><div class="metric-value" style="color:var(--amber)">$${L.gold.toLocaleString()}/oz</div>`);
+    }
+    if (L.usdinr) {
+        set('m-usdinr2', `<div class="metric-label">USD/INR</div><div class="metric-value">${L.usdinr.toFixed(2)}</div>`);
+    }
+
+    // Update Brent row in factor table
+    if (L.brent && L.brentScore) {
+        const brentScoreNum = parseFloat(L.brentScore);
+        const pillClass = brentScoreNum >= 0 ? 'score-pos' : 'score-neg';
+        const signalColor = brentScoreNum >= 0 ? 'var(--green)' : 'var(--red)';
+        const brentRow = document.getElementById('row-brent');
+        if (brentRow) {
+            brentRow.cells[1].textContent = `$${Math.round(L.brent)}/bbl`;
+            brentRow.cells[2].innerHTML = `<span class="score-pill ${pillClass}">${L.brentScore}</span>`;
+            brentRow.cells[4].textContent = L.brentSignal;
+            brentRow.cells[4].style.color = signalColor;
+            brentRow.cells[5].textContent = L.brentRationale;
+        }
+    }
+    // Update Gold row
+    if (L.gold && L.goldScore) {
+        const goldScoreNum = parseFloat(L.goldScore);
+        const pillClass = goldScoreNum >= 0 ? 'score-pos' : 'score-neg';
+        const signalColor = goldScoreNum >= 0 ? 'var(--green)' : 'var(--red)';
+        const goldRow = document.getElementById('row-gold');
+        if (goldRow) {
+            goldRow.cells[1].textContent = `$${L.gold.toLocaleString()}/oz`;
+            goldRow.cells[2].innerHTML = `<span class="score-pill ${pillClass}">${L.goldScore}</span>`;
+            goldRow.cells[4].textContent = L.goldSignal;
+            goldRow.cells[4].style.color = signalColor;
+            goldRow.cells[5].textContent = L.goldRationale;
+        }
+    }
+
+    // Recompute composite score dynamically
+    recomputeScore();
+}
+
+// === COMPOSITE SCORE RECOMPUTATION ===
+function recomputeScore() {
+    const L = D.latest;
+    if (!L) return;
+
+    // Fixed scores (static macro data)
+    const staticScores = {
+        gdp: 1, cpi: 1, pmi: 1, repo: 1, fii: -1, iip: 1
+    };
+    // Weights
+    const weights = {
+        gdp: 0.15, cpi: 0.10, pmi: 0.12, repo: 0.10,
+        fii: 0.18, iip: 0.10, brent: 0.13, gold: 0.12
+    };
+
+    const brentScore = parseFloat(L.brentScore || 1);
+    const goldScore  = parseFloat(L.goldScore  || 1);
+
+    let composite = 0;
+    for (const [k, w] of Object.entries(weights)) {
+        let score = staticScores[k] !== undefined ? staticScores[k] :
+                    k === 'brent' ? brentScore : goldScore;
+        composite += score * w;
+    }
+    composite = Math.round(composite * 100) / 100;
+
+    let decision, decisionColor;
+    if (composite <= -1.5)       { decision = 'UNDERWEIGHT';           decisionColor = 'var(--red)'; }
+    else if (composite <= -0.5)  { decision = 'SLIGHTLY UNDERWEIGHT';  decisionColor = 'var(--red)'; }
+    else if (composite <= 0.5)   { decision = 'NEUTRAL';               decisionColor = 'var(--amber)'; }
+    else if (composite <= 1.5)   { decision = 'SLIGHTLY OVERWEIGHT';   decisionColor = 'var(--green)'; }
+    else                         { decision = 'OVERWEIGHT';            decisionColor = 'var(--green)'; }
+
+    const box = document.getElementById('decision-box');
+    if (box) {
+        const valEl = box.querySelector('.decision-value');
+        const scoreEl = box.querySelector('.decision-score');
+        if (valEl) valEl.textContent = decision;
+        if (scoreEl) scoreEl.textContent = `Composite Score: ${composite >= 0 ? '+' : ''}${composite.toFixed(2)} / 2.00`;
+        // Update gauge pointer text
+        const pointerEl = box.querySelector('[style*="text-align:center"]');
+        if (pointerEl) pointerEl.textContent = `▲ Current: ${composite >= 0 ? '+' : ''}${composite.toFixed(2)} (${decision} zone)`;
+    }
+}
+
 // === INIT ===
-document.addEventListener('DOMContentLoaded', initCharts);
+document.addEventListener('DOMContentLoaded', () => {
+    initCharts();
+    updateMetrics();
+});
