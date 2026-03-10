@@ -433,77 +433,62 @@
         <div class="panel-header">
           <div>
             <div class="panel-title">Mirae India Midcap — Factor Sensitivity</div>
-            <div class="panel-sub">OLS Regression · R² = 0.666</div>
+            <div class="panel-sub">OLS Regression · Standardized Coefficients · R² = 0.836 · Monthly 2019–2026 · n=60</div>
           </div>
-          <span class="panel-badge" style="background:var(--amber-bg);color:var(--amber)">R² 0.666</span>
+          <span class="panel-badge" style="background:var(--green-bg);color:var(--green)">R² 0.836</span>
         </div>
         <div style="padding:8px 0">
           <div class="bar-row">
-            <div class="bar-label">IIP</div>
+            <div class="bar-label">Fwd P/E Δ</div>
             <div class="bar-track">
               <div class="bar-fill" style="width:100%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
             </div>
-            <div class="bar-val" style="color:var(--green)">+6.44</div>
+            <div class="bar-val" style="color:var(--green)">+7.50</div>
           </div>
           <div class="bar-row">
-            <div class="bar-label">PMI</div>
+            <div class="bar-label">Fwd EPS Rev.</div>
             <div class="bar-track">
-              <div class="bar-fill" style="width:89%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
+              <div class="bar-fill" style="width:70%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
             </div>
-            <div class="bar-val" style="color:var(--green)">+5.71</div>
+            <div class="bar-val" style="color:var(--green)">+5.26</div>
           </div>
           <div class="bar-row">
-            <div class="bar-label">CPI</div>
-            <div class="bar-track">
-              <div class="bar-fill" style="width:80%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
-            </div>
-            <div class="bar-val" style="color:var(--green)">+5.11</div>
-          </div>
-          <div class="bar-row">
-            <div class="bar-label">FII Flow</div>
-            <div class="bar-track">
-              <div class="bar-fill" style="width:12%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
-            </div>
-            <div class="bar-val" style="color:var(--green)">+0.76</div>
-          </div>
-          <div class="bar-row">
-            <div class="bar-label">Repo Rate</div>
+            <div class="bar-label">INR/USD Δ</div>
             <div class="bar-track">
               <div class="bar-fill"
-                style="width:60%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+                style="width:20%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
             </div>
-            <div class="bar-val" style="color:var(--red)">-3.86</div>
+            <div class="bar-val" style="color:var(--red)">-1.51</div>
           </div>
           <div class="bar-row">
-            <div class="bar-label">Brent Δ</div>
+            <div class="bar-label">US 10Y Δ</div>
             <div class="bar-track">
-              <div class="bar-fill"
-                style="width:60%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+              <div class="bar-fill" style="width:6%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
             </div>
-            <div class="bar-val" style="color:var(--red)">-3.88</div>
+            <div class="bar-val" style="color:var(--green)">+0.46</div>
           </div>
           <div class="bar-row">
-            <div class="bar-label">Gold Δ</div>
+            <div class="bar-label">IIP</div>
             <div class="bar-track">
-              <div class="bar-fill"
-                style="width:62%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+              <div class="bar-fill" style="width:4%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
             </div>
-            <div class="bar-val" style="color:var(--red)">-4.01</div>
+            <div class="bar-val" style="color:var(--green)">+0.30</div>
           </div>
           <div class="bar-row">
-            <div class="bar-label">GDP</div>
+            <div class="bar-label">Credit Growth</div>
             <div class="bar-track">
-              <div class="bar-fill"
-                style="width:100%;background:linear-gradient(90deg,#F87171,var(--red));margin-left:auto"></div>
+              <div class="bar-fill" style="width:3%;background:linear-gradient(90deg,var(--green),#34D399)"></div>
             </div>
-            <div class="bar-val" style="color:var(--red)">-6.80</div>
+            <div class="bar-val" style="color:var(--green)">+0.20</div>
           </div>
         </div>
         <div class="insight-box">
-          <strong>Midcap Insight:</strong> Mirae India Midcap shows higher sensitivity to IIP and PMI than the Nifty 50,
-          consistent with midcap stocks being more domestic-demand driven. Gold price changes are a bigger negative
-          factor for midcaps (-4.01 vs -0.17 for Nifty), likely because gold rallies often coincide with risk-off
-          environments that hit midcaps harder.
+          <strong>Key Finding (R² 0.666→0.836):</strong> Adding Bloomberg forward P/E change and forward EPS revision
+          reveals that Mirae India Midcap is overwhelmingly driven by the <em>earnings cycle</em> — when analysts
+          upgrade India's forward EPS, midcaps rally sharply (+5.26). Multiple re-rating is the single strongest
+          driver (+7.50): P/E expansion amplifies midcap moves more than large-caps. INR depreciation is the
+          dominant external risk (-1.51), directly eroding USD-denominated returns. IIP and credit growth remain
+          positive but secondary to the valuation/earnings cycle.
         </div>
       </div>
 
