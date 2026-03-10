@@ -75,9 +75,9 @@
         <div class="panel-header">
           <div>
             <div class="panel-title">Nifty 50</div>
-            <div class="panel-sub">Monthly Close · Jan 2022 — Feb 2026</div>
+            <div class="panel-sub" id="nifty-date-sub">Monthly Close · Jan 2022 — Feb 2026</div>
           </div>
-          <span class="panel-badge" style="background:var(--green-bg);color:var(--green)">▲ 45.2%</span>
+          <span class="panel-badge" id="nifty-badge" style="background:var(--green-bg);color:var(--green)">▲ 45.2%</span>
         </div>
         <div class="chart-wrap"><canvas id="c-nifty"></canvas></div>
       </div>
@@ -223,7 +223,7 @@
             <div class="panel-title">FII/FPI Net Monthly Flow</div>
             <div class="panel-sub">USD Million</div>
           </div>
-          <span class="panel-badge" style="background:var(--red-bg);color:var(--red)">Net Outflow</span>
+          <span class="panel-badge" id="fii-badge" style="background:var(--red-bg);color:var(--red)">Net Outflow</span>
         </div>
         <div class="chart-wrap"><canvas id="c-fii"></canvas></div>
       </div>
@@ -282,7 +282,7 @@
         <div class="panel-header">
           <div>
             <div class="panel-title">India Premium vs MSCI EM</div>
-            <div class="panel-sub">Forward P/E Premium % — Compressed from 92% to 10%</div>
+            <div class="panel-sub" id="premium-sub">Forward P/E Premium % — Compressed from 92% to 10%</div>
           </div>
           <span class="panel-badge" style="background:var(--amber-bg);color:var(--amber)">4Y Low</span>
         </div>
@@ -571,27 +571,17 @@
           </div>
         </div>
         <div style="padding:8px 0;font-size:13px;line-height:1.9;color:var(--text2)">
-          <p><strong style="color:var(--text)">Recommendation: SLIGHTLY OVERWEIGHT</strong> — Composite score +0.64
-            falls in the Slightly Overweight band (+0.5 to +1.5).</p>
-          <p style="margin-top:14px"><strong style="color:var(--text)">Bull Case:</strong> 7 of 8 factors score
-            positively. Macro fundamentals are strong (GDP 7.8%, CPI controlled at 4.2%, PMI expansionary). RBI's easing
-            cycle provides tailwind. Brent crude at $73 is a sweet spot for India. Valuation premium vs EM at a 4-year
-            low (10%) suggests the de-rating is largely done.</p>
-          <p style="margin-top:14px"><strong style="color:var(--text)">Bear Case:</strong> FII outflows remain
-            persistent (-$601mn latest, negative for 8 of last 12 months). INR depreciation to 91 creates headwind for
-            USD-denominated returns. Mirae India Midcap Fund underperforming Nifty and EM since H2 2024, reflecting
-            midcap de-rating.</p>
-          <p style="margin-top:14px"><strong style="color:var(--text)">Key Risk:</strong> FII flow reversal is the swing
-            factor — carries 18% weight and is the only negative score. A shift from outflows to inflows would push
-            composite to ~1.0 (stronger overweight).</p>
+          <p id="thesis-rec"><strong style="color:var(--text)">Recommendation: SLIGHTLY OVERWEIGHT</strong> — Composite score +0.64 falls in the Slightly Overweight band (+0.5 to +1.5).</p>
+          <p id="thesis-bull" style="margin-top:14px"><strong style="color:var(--text)">Bull Case:</strong> 7 of 8 factors score positively. Macro fundamentals are strong (GDP 7.8%, CPI controlled at 4.2%, PMI expansionary). RBI's easing cycle provides tailwind. Brent crude at $73 is a sweet spot for India. Valuation premium vs EM at a 4-year low (10%) suggests the de-rating is largely done.</p>
+          <p id="thesis-bear" style="margin-top:14px"><strong style="color:var(--text)">Bear Case:</strong> FII outflows remain persistent (-$601mn latest, negative for 8 of last 12 months). INR depreciation to 91 creates headwind for USD-denominated returns. Mirae India Midcap Fund underperforming Nifty and EM since H2 2024, reflecting midcap de-rating.</p>
+          <p id="thesis-risk" style="margin-top:14px"><strong style="color:var(--text)">Key Risk:</strong> FII flow reversal is the swing factor — carries 18% weight and is the only negative score. A shift from outflows to inflows would push composite to ~1.0 (stronger overweight).</p>
         </div>
       </div>
     </div>
 
     <!-- FOOTER -->
     <div class="footer">
-      <span>Source: Bloomberg Terminal (DAOL Investment) · Supplementary: RBI, MOSPI, CMIE · Model: OLS Quarterly
-        2022–2025</span>
+      <span id="footer-src">Source: Bloomberg Terminal (DAOL Investment) · Supplementary: RBI, MOSPI, CMIE · Model: OLS Quarterly 2022–2025</span>
       <span>DAOL-Bharat Fund · Analyst: Sharkky</span>
     </div>
 
