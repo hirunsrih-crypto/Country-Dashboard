@@ -255,74 +255,48 @@
         <div class="metric" id="m-pe-india">
           <div class="metric-label">India Fwd P/E</div>
           <div class="metric-value">20.0x</div>
-          <div class="metric-sub" id="m-pe-india-sub">—</div>
+          <div class="metric-sub">Nifty 50 consensus</div>
         </div>
         <div class="metric" id="m-pe-china">
           <div class="metric-label">MXCN Fwd P/E</div>
           <div class="metric-value" style="color:var(--red)">13.6x</div>
-          <div class="metric-sub" id="m-pe-china-sub">—</div>
+          <div class="metric-sub">MSCI China consensus</div>
         </div>
         <div class="metric" id="m-pe-sp">
           <div class="metric-label">SPX Fwd P/E</div>
           <div class="metric-value" style="color:var(--blue)">21.9x</div>
-          <div class="metric-sub" id="m-pe-sp-sub">—</div>
+          <div class="metric-sub">S&P 500 consensus</div>
         </div>
         <div class="metric" id="m-pe-em">
-          <div class="metric-label">MSCI EM</div>
+          <div class="metric-label">MSCI EM Fwd P/E</div>
           <div class="metric-value" style="color:var(--green)">18.1x</div>
+          <div class="metric-sub">EM consensus</div>
         </div>
-        <div class="metric" id="m-ret-india">
-          <div class="metric-label">India 1Y Return</div>
-          <div class="metric-value" id="m-ret-india-val">—</div>
-          <div class="metric-sub">USD · INDA ETF</div>
+        <div class="metric" id="m-prem-china">
+          <div class="metric-label">India vs MXCN</div>
+          <div class="metric-value" id="m-prem-china-val" style="color:var(--amber)">+47%</div>
+          <div class="metric-sub">Fwd P/E Premium</div>
         </div>
-        <div class="metric" id="m-ret-china">
-          <div class="metric-label">MXCN 1Y Return</div>
-          <div class="metric-value" id="m-ret-china-val">—</div>
-          <div class="metric-sub">USD · MCHI ETF</div>
+        <div class="metric" id="m-prem-sp">
+          <div class="metric-label">India vs SPX</div>
+          <div class="metric-value" id="m-prem-sp-val" style="color:var(--blue)">-9%</div>
+          <div class="metric-sub">Fwd P/E vs SPX</div>
         </div>
-        <div class="metric" id="m-ret-sp">
-          <div class="metric-label">SPX 1Y Return</div>
-          <div class="metric-value" id="m-ret-sp-val">—</div>
-          <div class="metric-sub">USD · ^GSPC</div>
+        <div class="metric" id="m-prem-em">
+          <div class="metric-label">India vs EM</div>
+          <div class="metric-value" id="m-prem-em-val" style="color:var(--green)">+10%</div>
+          <div class="metric-sub">Fwd P/E Premium</div>
         </div>
       </div>
 
       <div class="panel">
         <div class="panel-header">
           <div>
-            <div class="panel-title">India vs MXCN vs SPX — Period Returns</div>
-            <div class="panel-sub">USD-denominated · INDA / MCHI / ^GSPC · Base 100 at Jan 2022</div>
-          </div>
-          <span class="panel-badge" id="returns-badge" style="background:var(--blue-bg);color:var(--blue)">Live · yfinance</span>
-        </div>
-        <div class="chart-wrap"><canvas id="c-returns"></canvas></div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Valuation Snapshot — India vs MXCN vs SPX</div>
-            <div class="panel-sub">Bloomberg Forward P/E (static) · Returns from yfinance price data</div>
+            <div class="panel-title">Forward EPS — Indexed (Base=100, Jan 2022)</div>
+            <div class="panel-sub">Bloomberg consensus forward earnings · Normalized for cross-market comparison</div>
           </div>
         </div>
-        <table class="factor-table" id="val-table">
-          <thead>
-            <tr>
-              <th>Market</th>
-              <th>Fwd P/E</th>
-              <th>1M</th>
-              <th>3M</th>
-              <th>YTD</th>
-              <th>1Y</th>
-              <th>3Y (cum.)</th>
-              <th>Since Jan-22</th>
-            </tr>
-          </thead>
-          <tbody id="val-table-body">
-            <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px">Loading...</td></tr>
-          </tbody>
-        </table>
+        <div class="chart-wrap"><canvas id="c-fwdeps"></canvas></div>
       </div>
 
       <div class="panel">

@@ -235,51 +235,13 @@ function initCharts() {
         { label: 'Mirae India MC', data: D.norm.mirae, borderColor: c.pink, borderWidth: 3 }
     ], { dots: true, yOpts: { min: 50, max: 170 } });
 
-    // --- Peers: Returns comparison (India vs MXCN vs SPX) ---
-    const normDates = D.norm.d;
-    const n = normDates.length;
-
-    function periodReturn(series, monthsBack) {
-        if (!series || series.length < monthsBack + 1) return null;
-        const cur = series[n - 1];
-        const base = series[Math.max(0, n - 1 - monthsBack)];
-        return base ? Math.round((cur - base) / base * 1000) / 10 : null;
-    }
-
-    function ytdReturn(series) {
-        if (!series || !n) return null;
-        const curYear = normDates[n - 1].slice(0, 2);
-        const janLabel = curYear + '-01';
-        const janIdx = normDates.indexOf(janLabel);
-        if (janIdx < 0) return null;
-        const cur = series[n - 1];
-        const base = series[janIdx];
-        return base ? Math.round((cur - base) / base * 1000) / 10 : null;
-    }
-
-    const indiaRet = [periodReturn(D.norm.mirae, 1), periodReturn(D.norm.mirae, 3),
-                      ytdReturn(D.norm.mirae), periodReturn(D.norm.mirae, 12),
-                      periodReturn(D.norm.mirae, 36)];
-    const chinaRet = [periodReturn(D.norm.china, 1), periodReturn(D.norm.china, 3),
-                      ytdReturn(D.norm.china), periodReturn(D.norm.china, 12),
-                      periodReturn(D.norm.china, 36)];
-    const spxRet   = [periodReturn(D.norm.sp, 1), periodReturn(D.norm.sp, 3),
-                      ytdReturn(D.norm.sp), periodReturn(D.norm.sp, 12),
-                      periodReturn(D.norm.sp, 36)];
-
-    const retLabels = ['1M', '3M', 'YTD', '1Y', '3Y'];
-
-    mkChart('c-returns', 'bar', retLabels, [
-        { label: 'India (INDA)', data: indiaRet,
-          backgroundColor: indiaRet.map(v => v >= 0 ? c.accent + 'CC' : c.accent + '66'),
-          borderColor: c.accent, borderWidth: 1, borderRadius: 5, borderSkipped: false },
-        { label: 'MXCN (MCHI)', data: chinaRet,
-          backgroundColor: chinaRet.map(v => v >= 0 ? c.red + 'CC' : c.red + '66'),
-          borderColor: c.red, borderWidth: 1, borderRadius: 5, borderSkipped: false },
-        { label: 'SPX (^GSPC)', data: spxRet,
-          backgroundColor: spxRet.map(v => v >= 0 ? c.blue + 'CC' : c.blue + '66'),
-          borderColor: c.blue, borderWidth: 1, borderRadius: 5, borderSkipped: false },
-    ], { extra: { plugins: { legend: { display: true } } } });
+    // --- Peers: Forward EPS indexed chart ---
+    mkChart('c-fwdeps', 'line', D.fwdeps.d, [
+        { label: 'India (Nifty)', data: D.fwdeps.india, borderColor: c.accent, borderWidth: 3 },
+        { label: 'MSCI EM',       data: D.fwdeps.em,    borderColor: c.green },
+        { label: 'MSCI China',    data: D.fwdeps.china,  borderColor: c.red, borderDash: [5, 3] },
+        { label: 'S&P 500',       data: D.fwdeps.sp,     borderColor: c.blue, borderDash: [8, 4] }
+    ], { dots: true, yOpts: { min: 70, max: 200 } });
 }
 
 // === LIVE METRIC CARDS (from D.latest) ===
@@ -292,14 +254,6 @@ function updateMetrics() {
         const el = document.getElementById(id);
         if (el) el.innerHTML = html;
     }
-    function setText(id, text) {
-        const el = document.getElementById(id);
-        if (el) {
-            const valEl = el.querySelector('.metric-value');
-            if (valEl) valEl.textContent = text;
-        }
-    }
-
     // Overview metrics
     if (L.nifty) set('m-nifty', `<div class="metric-label">Nifty 50</div><div class="metric-value">${L.nifty.toLocaleString()}</div><div class="metric-sub">Live (yfinance)</div>`);
     if (L.sensex) set('m-sensex', `<div class="metric-label">Sensex</div><div class="metric-value">${L.sensex.toLocaleString()}</div>`);
@@ -354,80 +308,37 @@ function updateMetrics() {
 }
 
 function updatePeersMetrics() {
-    const normDates = D.norm.d;
-    const n = normDates.length;
-    if (!n) return;
-
-    function pRet(series, monthsBack) {
-        if (!series || series.length < monthsBack + 1) return null;
-        const cur = series[n - 1];
-        const base = series[Math.max(0, n - 1 - monthsBack)];
-        return base ? Math.round((cur - base) / base * 1000) / 10 : null;
-    }
-    function ytd(series) {
-        if (!series || !n) return null;
-        const janLabel = normDates[n - 1].slice(0, 2) + '-01';
-        const janIdx = normDates.indexOf(janLabel);
-        if (janIdx < 0) return null;
-        const cur = series[n - 1], base = series[janIdx];
-        return base ? Math.round((cur - base) / base * 1000) / 10 : null;
-    }
-    function sinceBase(series) {
-        if (!series || series.length < 2) return null;
-        const cur = series[n - 1], base = series[0];
-        return base ? Math.round((cur - base) / base * 1000) / 10 : null;
-    }
-    function retStr(v) {
-        if (v === null) return '—';
-        return (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
-    }
-    function retColor(v) {
-        return v === null ? 'var(--muted)' : v >= 0 ? 'var(--green)' : 'var(--red)';
-    }
-
-    // Metric cards — 1Y returns
-    const india1Y = pRet(D.norm.mirae, 12);
-    const china1Y = pRet(D.norm.china, 12);
-    const sp1Y    = pRet(D.norm.sp, 12);
-
-    const retInEl = document.getElementById('m-ret-india-val');
-    const retCnEl = document.getElementById('m-ret-china-val');
-    const retSpEl = document.getElementById('m-ret-sp-val');
-    if (retInEl) { retInEl.textContent = retStr(india1Y); retInEl.style.color = retColor(india1Y); }
-    if (retCnEl) { retCnEl.textContent = retStr(china1Y); retCnEl.style.color = retColor(china1Y); }
-    if (retSpEl) { retSpEl.textContent = retStr(sp1Y);    retSpEl.style.color = retColor(sp1Y); }
-
-    // P/E sub labels — show discount/premium to SPX
     const pe = D.fwdpe;
-    if (pe && pe.india && pe.sp && pe.china) {
-        const iLast = pe.india.at(-1), sLast = pe.sp.at(-1), cLast = pe.china.at(-1);
-        const iVsS  = ((iLast - sLast) / sLast * 100).toFixed(0);
-        const cVsS  = ((cLast - sLast) / sLast * 100).toFixed(0);
-        setTxt('m-pe-india-sub', `${iVsS >= 0 ? '+' : ''}${iVsS}% vs SPX`);
-        setTxt('m-pe-china-sub', `${cVsS >= 0 ? '+' : ''}${cVsS}% vs SPX`);
-        setTxt('m-pe-sp-sub', 'Benchmark');
+    if (!pe || !pe.india || !pe.china || !pe.sp || !pe.em) return;
+
+    const iLast = pe.india.at(-1);
+    const cLast = pe.china.at(-1);
+    const sLast = pe.sp.at(-1);
+    const eLast = pe.em.at(-1);
+
+    function premPct(base, peer) { return Math.round((base - peer) / peer * 100); }
+    function premStr(pct) { return (pct >= 0 ? '+' : '') + pct + '%'; }
+
+    const pcChina = premPct(iLast, cLast);
+    const pcSP    = premPct(iLast, sLast);
+    const pcEM    = premPct(iLast, eLast);
+
+    const elChina = document.getElementById('m-prem-china-val');
+    const elSP    = document.getElementById('m-prem-sp-val');
+    const elEM    = document.getElementById('m-prem-em-val');
+
+    if (elChina) {
+        elChina.textContent = premStr(pcChina);
+        elChina.style.color = pcChina > 30 ? 'var(--amber)' : pcChina > 0 ? 'var(--green)' : 'var(--red)';
     }
-
-    // Valuation table
-    const rows = [
-        { name: 'India (INDA)', pe: D.fwdpe.india?.at(-1), series: D.norm.mirae, color: 'var(--accent)' },
-        { name: 'MXCN (MCHI)', pe: D.fwdpe.china?.at(-1), series: D.norm.china, color: 'var(--red)' },
-        { name: 'SPX (^GSPC)', pe: D.fwdpe.sp?.at(-1),    series: D.norm.sp,    color: 'var(--blue)' },
-        { name: 'MSCI EM',     pe: D.fwdpe.em?.at(-1),    series: D.norm.em,    color: 'var(--green)' },
-    ];
-
-    const tbody = document.getElementById('val-table-body');
-    if (!tbody) return;
-    tbody.innerHTML = rows.map(r => {
-        const vals = [pRet(r.series,1), pRet(r.series,3), ytd(r.series), pRet(r.series,12), pRet(r.series,36), sinceBase(r.series)];
-        const cells = vals.map(v =>
-            `<td style="color:${retColor(v)};font-weight:600">${retStr(v)}</td>`).join('');
-        return `<tr>
-            <td><strong style="color:${r.color}">${r.name}</strong></td>
-            <td style="font-variant-numeric:tabular-nums">${r.pe ? r.pe.toFixed(1) + 'x' : '—'}</td>
-            ${cells}
-        </tr>`;
-    }).join('');
+    if (elSP) {
+        elSP.textContent = premStr(pcSP);
+        elSP.style.color = pcSP >= 0 ? 'var(--amber)' : 'var(--blue)';
+    }
+    if (elEM) {
+        elEM.textContent = premStr(pcEM);
+        elEM.style.color = pcEM > 20 ? 'var(--amber)' : pcEM > 0 ? 'var(--green)' : 'var(--red)';
+    }
 }
 
 // === COMPOSITE SCORE RECOMPUTATION ===
