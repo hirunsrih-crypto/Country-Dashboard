@@ -893,7 +893,7 @@ export default function IndiaDashboardV5() {
             <Tag label="DAOL-Bharat" color={T.accent}/>
           </div>
           <div style={{fontFamily:MONO,fontSize:9,color:T.dim,marginTop:3}}>
-            Nifty 50 · Midcap 100 · MAIMRCU LX · <span style={{color:T.accent}}>v6</span> · MOSPI MCP · Feb 2025
+            Nifty 50 · Midcap 100 · 0P0001CRE5 · <span style={{color:T.accent}}>v6</span> · MOSPI MCP · Feb 2025
           </div>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
@@ -1201,7 +1201,7 @@ export default function IndiaDashboardV5() {
                 {[
                   ["Nifty 50","NIFTY IN","yfinance","^NSEI","✓ Migrated"],
                   ["Nifty Midcap 100","NIFTYMIDCAP","yfinance","^NSEMDCP100","✓ Migrated"],
-                  ["Mirae Fund (MAIMRCU)","—","yfinance","MAIMRCU.HK","✓ yfinance"],
+                  ["Mirae Fund (0P0001CRE5)","—","yfinance","0P0001CRE5","✓ yfinance"],
                   ["GDP Growth Rate","EHGDIN / NAS","MOSPI MCP","NAS indicator_code=22 · base 2022-23","✓ MOSPI MCP"],
                   ["CPI Inflation","—","MOSPI MCP","CPI base 2012 · All India Combined · Group","✓ MOSPI MCP"],
                   ["IIP General Index","—","MOSPI MCP","IIP base 2011-12 · category_code=4 General","✓ MOSPI MCP"],
@@ -1243,7 +1243,7 @@ midcap100 = yf.download("^NSEMDCP100", start="2022-01-01", interval="1d")["Close
 usdinr    = yf.download("USDINR=X",    start="2022-01-01", interval="1d")["Close"]
 
 # ── Mirae fund price via yfinance ─────────────────────────────────────
-mirae     = yf.download("MAIMRCU.HK",  start="2022-01-01", interval="1d")["Close"]
+mirae     = yf.download("0P0001CRE5",  start="2022-01-01", interval="1d")["Close"]
 
 # ── Commodities (yfinance) ────────────────────────────────────────────
 brent = yf.download("BZ=F",  start="2022-01-01", interval="1d")["Close"]
