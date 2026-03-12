@@ -1199,9 +1199,9 @@ export default function IndiaDashboardV5() {
               </thead>
               <tbody>
                 {[
-                  ["Nifty 50","NIFTY IN","yfinance","^NSEI","✓ Migrated"],
-                  ["Nifty Midcap 100","NIFTYMIDCAP","yfinance","^NSEMDCP100","✓ Migrated"],
-                  ["Mirae Fund (0P0001CRE5)","—","yfinance","0P0001CRE5","✓ yfinance"],
+                  ["Nifty 50","NIFTY IN","yfinance","^NSEI · daily","✓ Migrated"],
+                  ["Nifty Midcap 100","NIFTYMIDCAP","yfinance","^NSEMDCP100 · daily","✓ Migrated"],
+                  ["Mirae Fund (0P0001CRE5)","—","yfinance","0P0001CRE5 · daily","✓ yfinance"],
                   ["GDP Growth Rate","EHGDIN / NAS","MOSPI MCP","NAS indicator_code=22 · base 2022-23","✓ MOSPI MCP"],
                   ["CPI Inflation","—","MOSPI MCP","CPI base 2012 · All India Combined · Group","✓ MOSPI MCP"],
                   ["IIP General Index","—","MOSPI MCP","IIP base 2011-12 · category_code=4 General","✓ MOSPI MCP"],
@@ -1211,10 +1211,10 @@ export default function IndiaDashboardV5() {
                   ["Repo Rate","RUBICMGC","RBI DBIE","Policy Repo Rate series","✓ Migrated"],
                   ["10Y G-Sec","INRPYLDP","RBI DBIE / CCIL","FBIL benchmark yield","✓ Migrated"],
                   ["FII Flows","FIINNET$","NSDL","nsdl.com — daily FPI equity data","✓ Migrated"],
-                  ["USD/INR","USDINR","yfinance","USDINR=X","✓ Migrated"],
+                  ["USD/INR","USDINR","yfinance","USDINR=X · daily","✓ Migrated"],
                   ["FX Reserves","INMORES$","RBI DBIE","Weekly press release","✓ Migrated"],
-                  ["Brent Crude","MCXBRCR","yfinance","BZ=F (USD/bbl monthly)","✓ Migrated"],
-                  ["Gold Spot","—","yfinance","GC=F (USD/oz monthly)","✓ Added"],
+                  ["Brent Crude","MCXBRCR","yfinance","BZ=F (USD/bbl daily)","✓ Migrated"],
+                  ["Gold Spot","—","yfinance","GC=F (USD/oz daily)","✓ Added"],
                   ["Forward P/E","BEST_PE_RATIO","Bloomberg ★","No free equivalent","★ Bloomberg Only"],
                   ["Forward EPS","BEST_EPS","Bloomberg ★","No free equivalent","★ Bloomberg Only"],
                 ].map(([series,bbg,src,ep,status])=>(
