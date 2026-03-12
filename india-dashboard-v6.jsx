@@ -175,7 +175,10 @@ const D_REPO = [
   {d:"Jan-24",v:6.5},{d:"Feb-24",v:6.5},{d:"Mar-24",v:6.5},{d:"Apr-24",v:6.5},
   {d:"May-24",v:6.5},{d:"Jun-24",v:6.5},{d:"Jul-24",v:6.5},{d:"Aug-24",v:6.5},
   {d:"Sep-24",v:6.5},{d:"Oct-24",v:6.5},{d:"Nov-24",v:6.5},{d:"Dec-24",v:6.5},
-  {d:"Jan-25",v:6.25},{d:"Feb-25",v:6.25}
+  {d:"Jan-25",v:6.25},{d:"Feb-25",v:6.25},{d:"Mar-25",v:6.25},{d:"Apr-25",v:6.00},
+  {d:"May-25",v:6.00},{d:"Jun-25",v:5.75},{d:"Jul-25",v:5.75},{d:"Aug-25",v:5.50},
+  {d:"Sep-25",v:5.50},{d:"Oct-25",v:5.25},{d:"Nov-25",v:5.25},{d:"Dec-25",v:5.25},
+  {d:"Jan-26",v:5.25},{d:"Feb-26",v:5.25},{d:"Mar-26",v:5.25}
 ];
 
 const D_YIELD10Y = [
@@ -842,7 +845,7 @@ function PeersTab({ T }) {
 }
 
 // ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
-export default function IndiaDashboardV6() {
+export default function IndiaDashboardV5() {
   const [theme, setTheme] = useState("dark");
   const [tab, setTab] = useState("overview");
   const T = THEMES[theme];
