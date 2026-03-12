@@ -1238,16 +1238,16 @@ import pandas_datareader.data as web
 import requests
 
 # ── Nifty indices (yfinance) ──────────────────────────────────────────
-nifty     = yf.download("^NSEI",       start="2022-01-01", interval="1mo")["Close"]
-midcap100 = yf.download("^NSEMDCP100", start="2022-01-01", interval="1mo")["Close"]
-usdinr    = yf.download("USDINR=X",    start="2022-01-01", interval="1mo")["Close"]
+nifty     = yf.download("^NSEI",       start="2022-01-01", interval="1d")["Close"]
+midcap100 = yf.download("^NSEMDCP100", start="2022-01-01", interval="1d")["Close"]
+usdinr    = yf.download("USDINR=X",    start="2022-01-01", interval="1d")["Close"]
 
 # ── Mirae fund price via yfinance ─────────────────────────────────────
-mirae     = yf.download("MAIMRCU.HK",  start="2022-01-01", interval="1mo")["Close"]
+mirae     = yf.download("MAIMRCU.HK",  start="2022-01-01", interval="1d")["Close"]
 
 # ── Commodities (yfinance) ────────────────────────────────────────────
-brent = yf.download("BZ=F",  start="2022-01-01", interval="1mo")["Close"]
-gold  = yf.download("GC=F",  start="2022-01-01", interval="1mo")["Close"]
+brent = yf.download("BZ=F",  start="2022-01-01", interval="1d")["Close"]
+gold  = yf.download("GC=F",  start="2022-01-01", interval="1d")["Close"]
 
 # ── MOSPI MCP — GDP (NAS) ─────────────────────────────────────────────
 # Step 1: GET /api/NAS/data?base_year=2022-23&series=Current&
@@ -1264,7 +1264,7 @@ gold  = yf.download("GC=F",  start="2022-01-01", interval="1mo")["Close"]
 
 # ── Holdings performance ───────────────────────────────────────────────
 tickers = ["FEDERALBNK.NS","LUPIN.NS","BHARATFORG.NS","INDUSINDBK.NS","DELHIVERY.NS"]
-prices  = yf.download(tickers, start="2024-01-01", interval="1mo")["Close"]
+prices  = yf.download(tickers, start="2024-01-01", interval="1d")["Close"]
 bm = midcap100.pct_change(periods=1) * 100  # vs Nifty Midcap 100 benchmark
 
 # ── US 10Y (FRED) ─────────────────────────────────────────────────────
