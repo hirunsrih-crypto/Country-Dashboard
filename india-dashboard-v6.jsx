@@ -67,6 +67,26 @@ const DISPLAY = "'Fraunces','Playfair Display',Georgia,serif";
 const DAILY_INTERVAL = 19;                          // ≈1 label per 20 trading days
 const dailyTick = d => d ? d.slice(3) : d;         // "13-Mar-26" → "Mar-26"
 
+// Range filter helpers
+const MON_IDX = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
+function parseChartDate(d) {
+  if (!d) return new Date(0);
+  const parts = d.split("-");
+  if (parts.length === 3) {                         // "DD-MMM-YY" daily format
+    return new Date(2000 + +parts[2], MON_IDX[parts[1]] - 1, +parts[0]);
+  }
+  return new Date(2000 + +parts[1], MON_IDX[parts[0]] - 1, 1); // "MMM-YY" monthly
+}
+const RANGE_DAYS = {"1W":7,"1M":30,"3M":90,"6M":182,"1Y":365,"ALL":null};
+const RANGE_INTERVAL = {"1W":0,"1M":1,"3M":3,"6M":6,"1Y":DAILY_INTERVAL,"ALL":DAILY_INTERVAL};
+function filterRange(data, range) {
+  if (!range || range === "ALL") return data;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - RANGE_DAYS[range]);
+  return data.filter(p => parseChartDate(p.d) >= cutoff);
+}
+const RANGES = ["1W","1M","3M","6M","1Y","ALL"];
+
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const D_NIFTY = [
   {d:"Jan-22",v:17340},{d:"Feb-22",v:16794},{d:"Mar-22",v:17465},{d:"Apr-22",v:17102},
@@ -396,18 +416,44 @@ const Kpi = ({ label, value, change, color, unit="", src, T }) => {
   );
 };
 
-const CT = ({ title, sub, src, height=200, children, T }) => (
+const CT = ({ title, sub, src, height=200, children, controls, T }) => (
   <div style={{background:T.card, border:`1px solid ${T.border}`, borderRadius:6, padding:"14px 16px"}}>
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
       <div>
         <div style={{fontSize:11,fontFamily:SANS,fontWeight:700,color:T.text}}>{title}</div>
         {sub && <div style={{fontSize:9,fontFamily:MONO,color:T.muted,marginTop:2}}>{sub}</div>}
       </div>
-      {src && <SourceBadge src={src} T={T}/>}
+      <div style={{display:"flex",alignItems:"center",gap:6}}>
+        {controls}
+        {src && <SourceBadge src={src} T={T}/>}
+      </div>
     </div>
     <div style={{height}}>{children}</div>
   </div>
 );
+
+// Range-aware chart wrapper — renders range buttons inside CT header
+function RangeChart({ title, sub, src, height=200, defaultRange="1Y", T, render }) {
+  const [range, setRange] = useState(defaultRange);
+  const controls = (
+    <div style={{display:"flex",gap:2}}>
+      {RANGES.map(r => (
+        <button key={r} onClick={()=>setRange(r)} style={{
+          padding:"2px 7px", cursor:"pointer", fontSize:8, fontFamily:MONO,
+          fontWeight:700, borderRadius:3,
+          background: range===r ? T.accent : "transparent",
+          color: range===r ? "#000" : T.dim,
+          border: `1px solid ${range===r ? T.accent : T.border}`,
+        }}>{r}</button>
+      ))}
+    </div>
+  );
+  return (
+    <CT title={title} sub={sub} src={src} height={height} controls={controls} T={T}>
+      {render(range)}
+    </CT>
+  );
+}
 
 const TT = ({ active, payload, label, suffix="", T }) => {
   if(!active||!payload) return null;
@@ -951,19 +997,22 @@ export default function IndiaDashboardV5() {
             <Kpi T={T} label="FII Flows Feb-25" value={fiilast} unit="B USD" color={fiilast>=0?T.green:T.red} src="NSDL"/>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:14}}>
-            <CT T={T} title="Nifty 50 vs Midcap 100 — Normalized (Jan-22=100)" sub="yfinance ^NSEI, ^NSEMDCP100" src="yfinance" height={220}>
-              <ResponsiveContainer>
-                <LineChart data={normPerf} margin={{top:5,right:10,left:-15,bottom:0}}>
-                  <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
-                  <XAxis dataKey="d" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
-                  <YAxis tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false}/>
-                  <Tooltip content={(p)=><TT {...p} T={T}/>}/>
-                  <Line dataKey="nifty" name="Nifty 50" stroke={T.accent} strokeWidth={2} dot={false}/>
-                  <Line dataKey="midcap" name="Midcap 100" stroke={T.orange} strokeWidth={2} dot={false} strokeDasharray="5 2"/>
-                  <Legend wrapperStyle={{fontSize:9,fontFamily:MONO}}/>
-                </LineChart>
-              </ResponsiveContainer>
-            </CT>
+            <RangeChart T={T} title="Nifty 50 vs Midcap 100 — Normalized" sub="yfinance ^NSEI, ^NSEMDCP100 · rebased to range start = 100" src="yfinance" height={220} defaultRange="1Y" render={range => {
+              const nBase = filterRange(D_NIFTY, range); const mBase = filterRange(D_MIDCAP, range);
+              const n0 = nBase[0]?.v||1, m0 = mBase[0]?.v||1;
+              const gMap = Object.fromEntries(mBase.map(p=>[p.d,p.v]));
+              const data = nBase.map(p=>({d:p.d,nifty:+(p.v/n0*100).toFixed(1),midcap:gMap[p.d]!=null?+(gMap[p.d]/m0*100).toFixed(1):null}));
+              const iv = RANGE_INTERVAL[range];
+              return (<ResponsiveContainer><LineChart data={data} margin={{top:5,right:10,left:-15,bottom:0}}>
+                <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
+                <XAxis dataKey="d" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={iv} tickFormatter={dailyTick}/>
+                <YAxis tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false}/>
+                <Tooltip content={(p)=><TT {...p} T={T}/>}/>
+                <Line dataKey="nifty" name="Nifty 50" stroke={T.accent} strokeWidth={2} dot={range==="1W"} dotRadius={3}/>
+                <Line dataKey="midcap" name="Midcap 100" stroke={T.orange} strokeWidth={2} dot={range==="1W"} dotRadius={3} strokeDasharray="5 2"/>
+                <Legend wrapperStyle={{fontSize:9,fontFamily:MONO}}/>
+              </LineChart></ResponsiveContainer>);
+            }}/>
             <CT T={T} title="Mfg + Svcs PMI" sub="S&P Global free release" src="S&P Global" height={220}>
               <ResponsiveContainer>
                 <LineChart margin={{top:5,right:10,left:-15,bottom:0}}
@@ -995,21 +1044,21 @@ export default function IndiaDashboardV5() {
                 </BarChart>
               </ResponsiveContainer>
             </CT>
-            <CT T={T} title="USD/INR & 10Y G-Sec Yield" sub="yfinance USDINR=X · RBI DBIE" height={160}>
-              <ResponsiveContainer>
-                <ComposedChart data={(() => { const yMap = Object.fromEntries(D_YIELD10Y.map(p=>[p.d,p.v])); return D_USDINR.map(p=>({d:p.d,usdinr:p.v,yield10y:yMap[p.d.slice(3)]??null})); })()}
-                  margin={{top:5,right:20,left:-15,bottom:0}}>
-                  <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
-                  <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
-                  <YAxis yAxisId="left" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[74,90]}/>
-                  <YAxis yAxisId="right" orientation="right" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[6.0,7.6]}/>
-                  <Tooltip content={(p)=><TT {...p} T={T}/>}/>
-                  <Line yAxisId="left" dataKey="usdinr" name="USD/INR" stroke={T.red} strokeWidth={2} dot={false}/>
-                  <Line yAxisId="right" dataKey="yield10y" name="10Y Yield%" stroke={T.blue} strokeWidth={2} dot={false}/>
-                  <Legend wrapperStyle={{fontSize:9,fontFamily:MONO}}/>
-                </ComposedChart>
-              </ResponsiveContainer>
-            </CT>
+            <RangeChart T={T} title="USD/INR & 10Y G-Sec Yield" sub="yfinance USDINR=X · RBI DBIE" height={160} defaultRange="1Y" render={range => {
+              const yMap = Object.fromEntries(D_YIELD10Y.map(p=>[p.d,p.v]));
+              const data = filterRange(D_USDINR, range).map(p=>({d:p.d,usdinr:p.v,yield10y:yMap[p.d.slice(3)]??null}));
+              const iv = RANGE_INTERVAL[range];
+              return (<ResponsiveContainer><ComposedChart data={data} margin={{top:5,right:20,left:-15,bottom:0}}>
+                <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
+                <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={iv} tickFormatter={dailyTick}/>
+                <YAxis yAxisId="left" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={["auto","auto"]}/>
+                <YAxis yAxisId="right" orientation="right" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={["auto","auto"]}/>
+                <Tooltip content={(p)=><TT {...p} T={T}/>}/>
+                <Line yAxisId="left" dataKey="usdinr" name="USD/INR" stroke={T.red} strokeWidth={2} dot={range==="1W"}/>
+                <Line yAxisId="right" dataKey="yield10y" name="10Y Yield%" stroke={T.blue} strokeWidth={2} dot={false}/>
+                <Legend wrapperStyle={{fontSize:9,fontFamily:MONO}}/>
+              </ComposedChart></ResponsiveContainer>);
+            }}/>
           </div>
         </div>
       )}
@@ -1155,32 +1204,32 @@ export default function IndiaDashboardV5() {
             </CT>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
-            <CT T={T} title="USD/INR Exchange Rate" sub="yfinance USDINR=X · daily close" src="yfinance" height={160}>
-              <ResponsiveContainer>
-                <AreaChart data={D_USDINR} margin={{top:5,right:10,left:-15,bottom:0}}>
-                  <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
-                  <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
-                  <YAxis tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[73,89]}/>
-                  <Tooltip content={(p)=><TT {...p} T={T}/>}/>
-                  <Area dataKey="v" name="USD/INR" stroke={T.red} fill={T.redDim} strokeWidth={2} dot={false}/>
-                </AreaChart>
-              </ResponsiveContainer>
-            </CT>
-            <CT T={T} title="Brent Crude & Gold" sub="USD/bbl · USD/oz · yfinance BZ=F, GC=F" src="yfinance" height={160}>
-              <ResponsiveContainer>
-                <ComposedChart data={(() => { const gMap = Object.fromEntries(D_GOLD.map(p=>[p.d,p.v])); return D_BRENT.map(p=>({d:p.d,brent:p.v,gold:gMap[p.d]??null})); })()}
-                  margin={{top:5,right:40,left:-15,bottom:0}}>
-                  <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
-                  <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
-                  <YAxis yAxisId="brent" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[55,135]} tickFormatter={v=>`$${v}`}/>
-                  <YAxis yAxisId="gold" orientation="right" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[1550,2950]} tickFormatter={v=>`$${v}`}/>
-                  <Tooltip content={(p)=><TT {...p} T={T}/>}/>
-                  <Line yAxisId="brent" dataKey="brent" name="Brent ($/bbl)" stroke={T.orange} strokeWidth={2} dot={false}/>
-                  <Line yAxisId="gold" dataKey="gold" name="Gold ($/oz)" stroke={T.accent} strokeWidth={2} dot={false} strokeDasharray="5 2"/>
-                  <Legend wrapperStyle={{fontSize:9,fontFamily:MONO}}/>
-                </ComposedChart>
-              </ResponsiveContainer>
-            </CT>
+            <RangeChart T={T} title="USD/INR Exchange Rate" sub="yfinance USDINR=X · daily close" src="yfinance" height={160} defaultRange="1Y" render={range => {
+              const data = filterRange(D_USDINR, range);
+              const iv = RANGE_INTERVAL[range];
+              return (<ResponsiveContainer><AreaChart data={data} margin={{top:5,right:10,left:-15,bottom:0}}>
+                <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
+                <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={iv} tickFormatter={dailyTick}/>
+                <YAxis tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={["auto","auto"]}/>
+                <Tooltip content={(p)=><TT {...p} T={T}/>}/>
+                <Area dataKey="v" name="USD/INR" stroke={T.red} fill={T.redDim} strokeWidth={2} dot={range==="1W"}/>
+              </AreaChart></ResponsiveContainer>);
+            }}/>
+            <RangeChart T={T} title="Brent Crude & Gold" sub="USD/bbl · USD/oz · yfinance BZ=F, GC=F" src="yfinance" height={160} defaultRange="1Y" render={range => {
+              const gMap = Object.fromEntries(filterRange(D_GOLD, range).map(p=>[p.d,p.v]));
+              const data = filterRange(D_BRENT, range).map(p=>({d:p.d,brent:p.v,gold:gMap[p.d]??null}));
+              const iv = RANGE_INTERVAL[range];
+              return (<ResponsiveContainer><ComposedChart data={data} margin={{top:5,right:40,left:-15,bottom:0}}>
+                <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
+                <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={iv} tickFormatter={dailyTick}/>
+                <YAxis yAxisId="brent" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={["auto","auto"]} tickFormatter={v=>`$${v}`}/>
+                <YAxis yAxisId="gold" orientation="right" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={["auto","auto"]} tickFormatter={v=>`$${v}`}/>
+                <Tooltip content={(p)=><TT {...p} T={T}/>}/>
+                <Line yAxisId="brent" dataKey="brent" name="Brent ($/bbl)" stroke={T.orange} strokeWidth={2} dot={range==="1W"}/>
+                <Line yAxisId="gold" dataKey="gold" name="Gold ($/oz)" stroke={T.accent} strokeWidth={2} dot={range==="1W"} strokeDasharray="5 2"/>
+                <Legend wrapperStyle={{fontSize:9,fontFamily:MONO}}/>
+              </ComposedChart></ResponsiveContainer>);
+            }}/>
           </div>
         </div>
       )}
