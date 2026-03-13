@@ -65,18 +65,33 @@ def read_jsx():
 
 # ── yfinance fetchers ─────────────────────────────────────────────────────────
 def fetch_yf_monthly(ticker, label, decimals=1):
-    """Download daily, resample to month-end, return list of {d, v}."""
+    """Download daily, resample to month-end, then append the latest
+    daily close if it belongs to a month newer than the last month-end
+    (i.e. we are mid-month and the current month isn't closed yet)."""
     try:
         df = yf.download(ticker, start=START_DATE, interval="1d",
                          progress=False, auto_adjust=True)
         if df.empty:
             raise ValueError("empty dataframe")
-        monthly = df["Close"].resample("ME").last().dropna()
+
+        close = df["Close"].dropna()
+        monthly = close.resample("ME").last().dropna()
+
         data = [
             {"d": f"{MONTHS[d.month-1]}-{str(d.year)[2:]}",
              "v": round(float(v), decimals)}
             for d, v in monthly.items()
         ]
+
+        # Append latest daily close if it's from the current (incomplete) month
+        latest_daily_date  = close.index[-1]
+        last_month_end     = monthly.index[-1]
+        if (latest_daily_date.year, latest_daily_date.month) > \
+           (last_month_end.year,    last_month_end.month):
+            latest_val = round(float(close.iloc[-1]), decimals)
+            latest_lbl = f"{MONTHS[latest_daily_date.month-1]}-{str(latest_daily_date.year)[2:]}"
+            data.append({"d": latest_lbl, "v": latest_val})
+
         print(f"  ✓  {label:<22} {len(data)} months  (latest: {data[-1]['d']} = {data[-1]['v']})")
         return data
     except Exception as e:
