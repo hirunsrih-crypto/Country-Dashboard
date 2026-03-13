@@ -433,9 +433,10 @@ const NIFTY_SECTOR_PERF = [
   { sector:"Nifty PSU Bank",   perf1m:-6.4, perf3m:-16.8, ytd:-16.4, perf1y:-14.2, miraewt:1.2  },
 ];
 
-function SectorHeatmap({ T }) {
-  const [view, setView] = useState("GRID");
+function MiraeMidcapTab({ T }) {
+  const [view, setView] = useState("SECTORS");
   const [sortKey, setSortKey] = useState("perf1m");
+  const [holdPeriod, setHoldPeriod] = useState("perf1m");
   const periods = [{k:"perf1m",l:"1M"},{k:"perf3m",l:"3M"},{k:"ytd",l:"YTD"},{k:"perf1y",l:"1Y"}];
 
   const perfColor = (v) => {
@@ -448,11 +449,19 @@ function SectorHeatmap({ T }) {
   };
 
   const sorted = [...NIFTY_SECTOR_PERF].sort((a,b)=>b[sortKey]-a[sortKey]);
+  const holdingsSorted = useMemo(()=>[...MIRAE_HOLDINGS].sort((a,b)=>b[holdPeriod]-a[holdPeriod]),[holdPeriod]);
+  const bmkVal = MIDCAP100_BENCHMARK[holdPeriod];
+  const periodLabel = {perf1m:"1M",perf3m:"3M",perf1y:"1Y"}[holdPeriod];
+  const holdingsChartData = holdingsSorted.map(h=>({
+    name: h.name.length > 12 ? h.name.slice(0,12)+"…" : h.name,
+    value: h[holdPeriod],
+    fill: h[holdPeriod] >= bmkVal ? T.green : T.red,
+  }));
 
   return (
     <div style={{display:"flex",flexDirection:"column",gap:12}}>
       <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
-        {["GRID","BAR","MIRAE"].map(v=>(
+        {["SECTORS","ACTIVE WT","ALLOCATION","HOLDINGS"].map(v=>(
           <button key={v} onClick={()=>setView(v)} style={{
             padding:"5px 14px", cursor:"pointer", fontSize:9, fontFamily:MONO,
             fontWeight:700, letterSpacing:"0.08em", borderRadius:4,
@@ -461,7 +470,7 @@ function SectorHeatmap({ T }) {
             border:`1px solid ${view===v ? T.accent : T.border}`
           }}>{v}</button>
         ))}
-        {(view==="GRID"||view==="BAR") && (
+        {(view==="SECTORS") && (
           <div style={{marginLeft:"auto",display:"flex",gap:4}}>
             {periods.map(p=>(
               <button key={p.k} onClick={()=>setSortKey(p.k)} style={{
@@ -474,56 +483,68 @@ function SectorHeatmap({ T }) {
             ))}
           </div>
         )}
+        {view==="HOLDINGS" && (
+          <div style={{marginLeft:"auto",display:"flex",gap:4}}>
+            {[["perf1m","1M"],["perf3m","3M"],["perf1y","1Y"]].map(([k,l])=>(
+              <button key={k} onClick={()=>setHoldPeriod(k)} style={{
+                padding:"4px 10px",cursor:"pointer",fontSize:9,fontFamily:MONO,fontWeight:600,borderRadius:3,
+                background:holdPeriod===k?T.blue:"transparent",
+                color:holdPeriod===k?"#fff":T.muted,
+                border:`1px solid ${holdPeriod===k?T.blue:T.border}`
+              }}>{l}</button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {view === "GRID" && (
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
-          {sorted.map(s=>{
-            const v = s[sortKey];
-            const bg = perfColor(v);
-            const ow = s.miraewt > 8;
-            const uw = s.miraewt < 3 && s.miraewt > 0;
-            return (
-              <div key={s.sector} style={{
-                background:T.card, border:`1px solid ${T.border}`, borderRadius:6,
-                padding:"10px 12px", position:"relative"
-              }}>
-                <div style={{fontSize:8,fontFamily:SANS,fontWeight:600,color:T.text,marginBottom:6,lineHeight:1.2}}>{s.sector}</div>
-                <div style={{fontSize:18,fontFamily:MONO,fontWeight:700,color:bg,lineHeight:1}}>
-                  {v>0?"+":""}{v.toFixed(1)}%
+      {/* ── SECTORS: heatmap grid ── */}
+      {view === "SECTORS" && (
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+            {sorted.map(s=>{
+              const v = s[sortKey];
+              const bg = perfColor(v);
+              const ow = s.miraewt > 8;
+              const uw = s.miraewt < 3 && s.miraewt > 0;
+              return (
+                <div key={s.sector} style={{
+                  background:T.card, border:`1px solid ${T.border}`, borderRadius:6,
+                  padding:"10px 12px", position:"relative"
+                }}>
+                  <div style={{fontSize:8,fontFamily:SANS,fontWeight:600,color:T.text,marginBottom:6,lineHeight:1.2}}>{s.sector}</div>
+                  <div style={{fontSize:18,fontFamily:MONO,fontWeight:700,color:bg,lineHeight:1}}>
+                    {v>0?"+":""}{v.toFixed(1)}%
+                  </div>
+                  <div style={{fontSize:8,fontFamily:MONO,color:T.muted,marginTop:4}}>Mirae: {s.miraewt.toFixed(1)}%</div>
+                  {(ow||uw) && (
+                    <div style={{position:"absolute",top:6,right:6,width:7,height:7,borderRadius:"50%",
+                      background:ow?"#FB923C":"#A78BFA"}}/>
+                  )}
                 </div>
-                <div style={{fontSize:8,fontFamily:MONO,color:T.muted,marginTop:4}}>Mirae: {s.miraewt.toFixed(1)}%</div>
-                {(ow||uw) && (
-                  <div style={{position:"absolute",top:6,right:6,width:7,height:7,borderRadius:"50%",
-                    background:ow?"#FB923C":"#A78BFA"}}/>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+          <CT title={`Nifty Sector Performance — ${periods.find(p=>p.k===sortKey)?.l}`} sub="Nifty sector indices · color = return magnitude" T={T} height={360}>
+            <ResponsiveContainer>
+              <BarChart data={sorted} layout="vertical" margin={{top:0,right:60,left:104,bottom:0}}>
+                <CartesianGrid stroke={T.grid} strokeDasharray="3 3" horizontal={false}/>
+                <XAxis type="number" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false}
+                  tickFormatter={v=>`${v}%`} domain={["auto","auto"]}/>
+                <YAxis type="category" dataKey="sector" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} width={100}/>
+                <Tooltip content={(props)=><TT {...props} suffix="%" T={T}/>}/>
+                <ReferenceLine x={0} stroke={T.borderBright}/>
+                <Bar dataKey={sortKey} name="Return" radius={[0,3,3,0]}>
+                  {sorted.map((s,idx)=><Cell key={idx} fill={perfColor(s[sortKey])}/>)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CT>
         </div>
       )}
 
-      {view === "BAR" && (
-        <CT title={`Sector Performance — ${periods.find(p=>p.k===sortKey)?.l}`} sub="Nifty sector indices" T={T} height={380}>
-          <ResponsiveContainer>
-            <BarChart data={sorted} layout="vertical" margin={{top:0,right:60,left:100,bottom:0}}>
-              <CartesianGrid stroke={T.grid} strokeDasharray="3 3" horizontal={false}/>
-              <XAxis type="number" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false}
-                tickFormatter={v=>`${v}%`} domain={["auto","auto"]}/>
-              <YAxis type="category" dataKey="sector" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} width={96}/>
-              <Tooltip content={(props)=><TT {...props} suffix="%" T={T}/>}/>
-              <ReferenceLine x={0} stroke={T.borderBright}/>
-              <Bar dataKey={sortKey} name="Return" radius={[0,3,3,0]}>
-                {sorted.map((s,i)=><Cell key={i} fill={perfColor(s[sortKey])}/>)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </CT>
-      )}
-
-      {view === "MIRAE" && (
+      {/* ── ACTIVE WT: dual active weight bars ── */}
+      {view === "ACTIVE WT" && (
         <div style={{display:"flex",flexDirection:"column",gap:12}}>
-          {/* Dual active weight chart: vs Nifty 50 and vs Nifty Midcap 100 */}
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
             <CT title="Mirae Active Wt vs Nifty 50" sub="Mirae wt − Nifty 50 index wt (pp)" T={T} height={340}>
               <ResponsiveContainer>
@@ -537,12 +558,12 @@ function SectorHeatmap({ T }) {
                   <ReferenceLine x={0} stroke={T.borderBright}/>
                   <Bar dataKey="active" name="vs Nifty 50" radius={[0,3,3,0]}>
                     {[...MIRAE_SECTORS].filter(s=>s.sector!=="Cash & Others").sort((a,b)=>Math.abs(b.active)-Math.abs(a.active))
-                      .map((s,i)=><Cell key={i} fill={s.active>=0?"#FB923C":"#A78BFA"}/>)}
+                      .map((s,idx)=><Cell key={idx} fill={s.active>=0?"#FB923C":"#A78BFA"}/>)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </CT>
-            <CT title="Mirae Active Wt vs Nifty Midcap 100" sub="Mirae wt − Midcap 100 benchmark wt (pp)" T={T} height={340}>
+            <CT title="Mirae Active Wt vs Nifty Midcap 100" sub="Mirae wt − Midcap 100 benchmark wt (pp) · true benchmark" T={T} height={340}>
               <ResponsiveContainer>
                 <BarChart data={[...MIRAE_SECTORS].filter(s=>s.sector!=="Cash & Others").sort((a,b)=>Math.abs(b.activeMidcap)-Math.abs(a.activeMidcap))}
                   layout="vertical" margin={{top:0,right:50,left:128,bottom:0}}>
@@ -554,14 +575,18 @@ function SectorHeatmap({ T }) {
                   <ReferenceLine x={0} stroke={T.borderBright}/>
                   <Bar dataKey="activeMidcap" name="vs Midcap 100" radius={[0,3,3,0]}>
                     {[...MIRAE_SECTORS].filter(s=>s.sector!=="Cash & Others").sort((a,b)=>Math.abs(b.activeMidcap)-Math.abs(a.activeMidcap))
-                      .map((s,i)=><Cell key={i} fill={s.activeMidcap>=0?T.teal:T.purple}/>)}
+                      .map((s,idx)=><Cell key={idx} fill={s.activeMidcap>=0?T.teal:T.purple}/>)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </CT>
           </div>
+        </div>
+      )}
 
-          {/* Full allocation table with both benchmarks */}
+      {/* ── ALLOCATION: full sector table ── */}
+      {view === "ALLOCATION" && (
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
           <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,padding:"14px 16px"}}>
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
               <div style={{fontSize:11,fontFamily:SANS,fontWeight:700,color:T.text}}>Sector Allocation — Mirae vs Benchmarks</div>
@@ -579,7 +604,7 @@ function SectorHeatmap({ T }) {
                 </tr>
               </thead>
               <tbody>
-                {[...MIRAE_SECTORS].sort((a,b)=>b.wt-a.wt).map((s,i)=>(
+                {[...MIRAE_SECTORS].sort((a,b)=>b.wt-a.wt).map((s)=>(
                   <tr key={s.sector} style={{borderBottom:`1px solid ${T.border}20`}}>
                     <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,color:T.text}}>{s.sector}</td>
                     <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,color:T.accent,fontWeight:700,textAlign:"right"}}>{s.wt.toFixed(1)}%</td>
@@ -599,33 +624,70 @@ function SectorHeatmap({ T }) {
               ★ Mirae benchmark is <span style={{color:T.orange}}>Nifty Midcap 100</span> per fund mandate. Active vs Midcap 100 = true benchmark-relative exposure.
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Holdings table */}
+      {/* ── HOLDINGS: bar chart + table vs Midcap 100 benchmark ── */}
+      {view === "HOLDINGS" && (
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,padding:"14px 16px"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+              <div>
+                <div style={{fontSize:11,fontFamily:SANS,fontWeight:700,color:T.text}}>
+                  Holdings Performance vs Nifty Midcap 100 Benchmark
+                </div>
+                <div style={{fontSize:9,fontFamily:MONO,color:T.muted,marginTop:2}}>
+                  Benchmark: {bmkVal>=0?"+":""}{bmkVal.toFixed(1)}% ({periodLabel}) · ^NSEMDCP100 · yfinance
+                  · <span style={{color:T.green}}>Green = outperform</span> · <span style={{color:T.red}}>Red = underperform</span>
+                </div>
+              </div>
+            </div>
+            <div style={{height:340}}>
+              <ResponsiveContainer>
+                <BarChart data={holdingsChartData} layout="vertical" margin={{top:0,right:60,left:108,bottom:0}}>
+                  <CartesianGrid stroke={T.grid} strokeDasharray="3 3" horizontal={false}/>
+                  <XAxis type="number" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false}
+                    tickFormatter={v=>`${v}%`} domain={["auto","auto"]}/>
+                  <YAxis type="category" dataKey="name" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} width={104}/>
+                  <Tooltip content={(props)=><TT {...props} suffix="%" T={T}/>}/>
+                  <ReferenceLine x={0} stroke={T.borderBright}/>
+                  <ReferenceLine x={bmkVal} stroke={T.teal} strokeDasharray="4 2"
+                    label={{value:`BM ${bmkVal.toFixed(1)}%`,fill:T.teal,fontSize:8,position:"insideTopRight"}}/>
+                  <Bar dataKey="value" name={`${periodLabel} Return`} radius={[0,3,3,0]}>
+                    {holdingsChartData.map((d,idx)=><Cell key={idx} fill={d.fill}/>)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
           <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,padding:"14px 16px"}}>
             <div style={{fontSize:11,fontFamily:SANS,fontWeight:700,color:T.text,marginBottom:10}}>Top 15 Holdings</div>
             <table style={{width:"100%",borderCollapse:"collapse"}}>
               <thead>
                 <tr style={{borderBottom:`1px solid ${T.border}`}}>
-                  {["#","Stock","Sector","Wt%","1M","3M"].map(h=>(
-                    <th key={h} style={{padding:"5px 8px",fontSize:8,fontFamily:MONO,color:T.dim,textAlign:"left"}}>{h}</th>
+                  {["#","Stock","Sector","Wt%","1M","3M","1Y"].map(h=>(
+                    <th key={h} style={{padding:"5px 8px",fontSize:8,fontFamily:MONO,color:T.dim,textAlign:h==="Stock"||h==="#"?"left":"right"}}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {MIRAE_HOLDINGS.map((h,i)=>(
+                {holdingsSorted.map((h,idx)=>(
                   <tr key={h.ticker} style={{borderBottom:`1px solid ${T.border}20`}}>
-                    <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,color:T.dim}}>{i+1}</td>
+                    <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,color:T.dim}}>{idx+1}</td>
                     <td style={{padding:"6px 8px"}}>
                       <div style={{fontFamily:MONO,fontSize:9,color:T.text,fontWeight:600}}>{h.name}</div>
                       <div style={{fontFamily:MONO,fontSize:7,color:T.dim}}>{h.ticker}</div>
                     </td>
                     <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:8,color:T.muted}}>{h.sector}</td>
-                    <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,color:T.accent,fontWeight:700}}>{h.wt.toFixed(2)}%</td>
-                    <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,color:h.perf1m>=0?T.green:T.red}}>
+                    <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,color:T.accent,fontWeight:700,textAlign:"right"}}>{h.wt.toFixed(2)}%</td>
+                    <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,textAlign:"right",color:h.perf1m>=0?T.green:T.red}}>
                       {h.perf1m>=0?"+":""}{h.perf1m.toFixed(1)}%
                     </td>
-                    <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,color:h.perf3m>=0?T.green:T.red}}>
+                    <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,textAlign:"right",color:h.perf3m>=0?T.green:T.red}}>
                       {h.perf3m>=0?"+":""}{h.perf3m.toFixed(1)}%
+                    </td>
+                    <td style={{padding:"6px 8px",fontFamily:MONO,fontSize:9,textAlign:"right",color:h.perf1y>=0?T.green:T.red}}>
+                      {h.perf1y>=0?"+":""}{h.perf1y.toFixed(1)}%
                     </td>
                   </tr>
                 ))}
@@ -641,7 +703,6 @@ function SectorHeatmap({ T }) {
 // ─── PEERS TAB ────────────────────────────────────────────────────────────────
 function PeersTab({ T }) {
   const [peVal, setPeVal] = useState("fwdPE");  // fwdPE | fwdEPS
-  const [holdPeriod, setHoldPeriod] = useState("perf1m");
 
   const peerPremium = useMemo(() => D_PEERS_FWD_PE.map(p => ({
     ...p,
@@ -650,20 +711,8 @@ function PeersTab({ T }) {
     premMidcap: p.midcap100 && p.msciEM ? +((p.midcap100/p.msciEM-1)*100).toFixed(1) : null,
   })), []);
   const latest = peerPremium[peerPremium.length-1];
-  const latestEPS = D_PEERS_FWD_EPS[D_PEERS_FWD_EPS.length-1];
-
-  const holdingsSorted = useMemo(()=>[...MIRAE_HOLDINGS].sort((a,b)=>b[holdPeriod]-a[holdPeriod]),[holdPeriod]);
-  const bmkVal = MIDCAP100_BENCHMARK[holdPeriod];
-  const periodLabel = {perf1m:"1M",perf3m:"3M",perf1y:"1Y"}[holdPeriod];
-
-  const holdingsChartData = holdingsSorted.map(h=>({
-    name: h.name.length > 12 ? h.name.slice(0,12)+"…" : h.name,
-    value: h[holdPeriod],
-    fill: h[holdPeriod] >= bmkVal ? T.green : T.red,
-  }));
 
   const peDatasets = peVal === "fwdPE" ? D_PEERS_FWD_PE : D_PEERS_FWD_EPS;
-  const peSuffix = peVal === "fwdPE" ? "x" : "";
   const peUnit = peVal === "fwdPE" ? "x" : "";
 
   return (
@@ -752,48 +801,6 @@ function PeersTab({ T }) {
         </CT>
       </div>
 
-      {/* Holdings vs Midcap 100 Benchmark */}
-      <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,padding:"14px 16px"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <div>
-            <div style={{fontSize:11,fontFamily:SANS,fontWeight:700,color:T.text}}>
-              Holdings Performance vs Nifty Midcap 100 Benchmark
-            </div>
-            <div style={{fontSize:9,fontFamily:MONO,color:T.muted,marginTop:2}}>
-              Benchmark: {bmkVal>=0?"+":""}{bmkVal.toFixed(1)}% ({periodLabel}) · ^NSEMDCP100 · yfinance
-              · <span style={{color:T.green}}>Green = outperform</span> · <span style={{color:T.red}}>Red = underperform</span>
-            </div>
-          </div>
-          <div style={{display:"flex",gap:4}}>
-            {[["perf1m","1M"],["perf3m","3M"],["perf1y","1Y"]].map(([k,l])=>(
-              <button key={k} onClick={()=>setHoldPeriod(k)} style={{
-                padding:"4px 10px",cursor:"pointer",fontSize:9,fontFamily:MONO,fontWeight:600,borderRadius:3,
-                background:holdPeriod===k?T.blue:"transparent",
-                color:holdPeriod===k?"#fff":T.muted,
-                border:`1px solid ${holdPeriod===k?T.blue:T.border}`
-              }}>{l}</button>
-            ))}
-          </div>
-        </div>
-        <div style={{height:320}}>
-          <ResponsiveContainer>
-            <BarChart data={holdingsChartData} layout="vertical" margin={{top:0,right:60,left:108,bottom:0}}>
-              <CartesianGrid stroke={T.grid} strokeDasharray="3 3" horizontal={false}/>
-              <XAxis type="number" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false}
-                tickFormatter={v=>`${v}%`} domain={["auto","auto"]}/>
-              <YAxis type="category" dataKey="name" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} width={104}/>
-              <Tooltip content={(props)=><TT {...props} suffix="%" T={T}/>}/>
-              <ReferenceLine x={0} stroke={T.borderBright}/>
-              <ReferenceLine x={bmkVal} stroke={T.teal} strokeDasharray="4 2"
-                label={{value:`BM ${bmkVal.toFixed(1)}%`,fill:T.teal,fontSize:8,position:"insideTopRight"}}/>
-              <Bar dataKey="value" name={`${periodLabel} Return`} radius={[0,3,3,0]}>
-                {holdingsChartData.map((d,i)=><Cell key={i} fill={d.fill}/>)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
       {/* Valuation Snapshot Table */}
       <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,padding:"14px 16px"}}>
         <div style={{fontSize:11,fontFamily:SANS,fontWeight:700,color:T.text,marginBottom:12}}>Valuation Snapshot — Latest</div>
@@ -855,7 +862,7 @@ export default function IndiaDashboardV5() {
     { id:"macro",    label:"Macro" },
     { id:"external", label:"External" },
     { id:"peers",    label:"Peers" },
-    { id:"sector",   label:"Sector · Mirae" },
+    { id:"sector",   label:"Mirae Midcap" },
     { id:"sources",  label:"Data Sources" },
   ];
 
@@ -1175,7 +1182,7 @@ export default function IndiaDashboardV5() {
       {tab === "peers" && <PeersTab T={T}/>}
 
       {/* ══ SECTOR ══ */}
-      {tab === "sector" && <SectorHeatmap T={T}/>}
+      {tab === "sector" && <MiraeMidcapTab T={T}/>}
 
       {/* ══ SOURCES ══ */}
       {tab === "sources" && (
