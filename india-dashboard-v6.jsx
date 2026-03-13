@@ -63,6 +63,10 @@ const MONO = "'IBM Plex Mono','Fira Code',monospace";
 const SANS = "'DM Sans','Plus Jakarta Sans',sans-serif";
 const DISPLAY = "'Fraunces','Playfair Display',Georgia,serif";
 
+// Daily chart helpers — data format "DD-MMM-YY", show ~monthly labels
+const DAILY_INTERVAL = 19;                          // ≈1 label per 20 trading days
+const dailyTick = d => d ? d.slice(3) : d;         // "13-Mar-26" → "Mar-26"
+
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const D_NIFTY = [
   {d:"Jan-22",v:17340},{d:"Feb-22",v:16794},{d:"Mar-22",v:17465},{d:"Apr-22",v:17102},
@@ -951,7 +955,7 @@ export default function IndiaDashboardV5() {
               <ResponsiveContainer>
                 <LineChart data={normPerf} margin={{top:5,right:10,left:-15,bottom:0}}>
                   <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
-                  <XAxis dataKey="d" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={5}/>
+                  <XAxis dataKey="d" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
                   <YAxis tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false}/>
                   <Tooltip content={(p)=><TT {...p} T={T}/>}/>
                   <Line dataKey="nifty" name="Nifty 50" stroke={T.accent} strokeWidth={2} dot={false}/>
@@ -996,7 +1000,7 @@ export default function IndiaDashboardV5() {
                 <ComposedChart data={D_USDINR.map((p,i)=>({d:p.d,usdinr:p.v,yield10y:D_YIELD10Y[i]?.v}))}
                   margin={{top:5,right:20,left:-15,bottom:0}}>
                   <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
-                  <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={5}/>
+                  <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
                   <YAxis yAxisId="left" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[74,90]}/>
                   <YAxis yAxisId="right" orientation="right" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[6.0,7.6]}/>
                   <Tooltip content={(p)=><TT {...p} T={T}/>}/>
@@ -1151,11 +1155,11 @@ export default function IndiaDashboardV5() {
             </CT>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
-            <CT T={T} title="USD/INR Exchange Rate" sub="yfinance USDINR=X · monthly close" src="yfinance" height={160}>
+            <CT T={T} title="USD/INR Exchange Rate" sub="yfinance USDINR=X · daily close" src="yfinance" height={160}>
               <ResponsiveContainer>
                 <AreaChart data={D_USDINR} margin={{top:5,right:10,left:-15,bottom:0}}>
                   <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
-                  <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={5}/>
+                  <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
                   <YAxis tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[73,89]}/>
                   <Tooltip content={(p)=><TT {...p} T={T}/>}/>
                   <Area dataKey="v" name="USD/INR" stroke={T.red} fill={T.redDim} strokeWidth={2} dot={false}/>
@@ -1167,7 +1171,7 @@ export default function IndiaDashboardV5() {
                 <ComposedChart data={D_BRENT.map((p,i)=>({d:p.d,brent:p.v,gold:D_GOLD[i]?.v}))}
                   margin={{top:5,right:40,left:-15,bottom:0}}>
                   <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
-                  <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={5}/>
+                  <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
                   <YAxis yAxisId="brent" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[55,135]} tickFormatter={v=>`$${v}`}/>
                   <YAxis yAxisId="gold" orientation="right" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={[1550,2950]} tickFormatter={v=>`$${v}`}/>
                   <Tooltip content={(p)=><TT {...p} T={T}/>}/>
