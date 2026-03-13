@@ -74,7 +74,11 @@ def fetch_yf_daily(ticker, label, decimals=1):
         if df.empty:
             raise ValueError("empty dataframe")
 
-        close = df["Close"].dropna()
+        # yfinance ≥0.2 returns multi-level columns; squeeze to Series
+        close = df["Close"]
+        if hasattr(close, "squeeze"):
+            close = close.squeeze()
+        close = close.dropna()
         data = [
             {"d": f"{d.day:02d}-{MONTHS[d.month-1]}-{str(d.year)[2:]}",
              "v": round(float(v), decimals)}
@@ -199,7 +203,7 @@ def main():
     # ── Fetch ──────────────────────────────────────────────────────────────
     print("[ yfinance ]")
     nifty  = fetch_yf_daily("^NSEI",       "Nifty 50",        0)
-    midcap = fetch_yf_daily("^NSEMDCP100", "Nifty Midcap 100",0)
+    midcap = fetch_yf_daily("^NSMIDCP",    "Nifty Midcap 100",0)
     usdinr = fetch_yf_daily("USDINR=X",    "USD/INR",         1)
     brent  = fetch_yf_daily("BZ=F",        "Brent Crude",     1)
     gold   = fetch_yf_daily("GC=F",        "Gold Spot",       0)
