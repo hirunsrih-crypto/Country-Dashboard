@@ -1,0 +1,47 @@
+name: Weekly Data Refresh
+
+on:
+  schedule:
+    # Every Monday at 06:00 UTC (11:30 IST)
+    - cron: "0 6 * * 1"
+  workflow_dispatch:   # allow manual trigger from GitHub Actions UI
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install yfinance requests pandas
+
+      - name: Run data refresh
+        run: python scripts/refresh_data.py
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet india-dashboard-v6.jsx \
+            && echo "changed=false" >> $GITHUB_OUTPUT \
+            || echo "changed=true"  >> $GITHUB_OUTPUT
+
+      - name: Commit and push updated data
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add india-dashboard-v6.jsx
+          git commit -m "chore: weekly data refresh $(date -u '+%Y-%m-%d')"
+          git push
