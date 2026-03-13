@@ -98,6 +98,8 @@ const D_GDP = [
   {d:"Q3 FY24",v:7.1,fy:"2023-24",q:"Q3"},{d:"Q4 FY24",v:7.5,fy:"2023-24",q:"Q4"},
   {d:"Q1 FY25",v:7.5,fy:"2024-25",q:"Q1"},{d:"Q2 FY25",v:6.6,fy:"2024-25",q:"Q2"},
   {d:"Q3 FY25",v:7.4,fy:"2024-25",q:"Q3"},{d:"Q4 FY25",v:7.0,fy:"2024-25",q:"Q4"},
+  {d:"Q1 FY26",v:6.7,fy:"2025-26",q:"Q1"},{d:"Q2 FY26",v:8.4,fy:"2025-26",q:"Q2"},
+  {d:"Q3 FY26",v:7.8,fy:"2025-26",q:"Q3"},
 ];
 
 // MOSPI CPI — All India Combined General (base 2012, monthly YoY inflation %)
@@ -124,6 +126,7 @@ const D_IIP_MOSPI = [
   {d:"Jan-25",v:5.2},{d:"Feb-25",v:2.7},{d:"Mar-25",v:3.9},{d:"Apr-25",v:2.6},
   {d:"May-25",v:1.9},{d:"Jun-25",v:1.5},{d:"Jul-25",v:4.3},{d:"Aug-25",v:4.1},
   {d:"Sep-25",v:4.6},{d:"Oct-25",v:0.5},{d:"Nov-25",v:7.2},{d:"Dec-25",v:8.0},
+  {d:"Jan-26",v:4.8},
 ];
 
 const D_MFGPMI = [
