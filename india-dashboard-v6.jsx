@@ -997,7 +997,7 @@ export default function IndiaDashboardV5() {
             </CT>
             <CT T={T} title="USD/INR & 10Y G-Sec Yield" sub="yfinance USDINR=X · RBI DBIE" height={160}>
               <ResponsiveContainer>
-                <ComposedChart data={D_USDINR.map((p,i)=>({d:p.d,usdinr:p.v,yield10y:D_YIELD10Y[i]?.v}))}
+                <ComposedChart data={(() => { const yMap = Object.fromEntries(D_YIELD10Y.map(p=>[p.d,p.v])); return D_USDINR.map(p=>({d:p.d,usdinr:p.v,yield10y:yMap[p.d.slice(3)]??null})); })()}
                   margin={{top:5,right:20,left:-15,bottom:0}}>
                   <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
                   <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
@@ -1168,7 +1168,7 @@ export default function IndiaDashboardV5() {
             </CT>
             <CT T={T} title="Brent Crude & Gold" sub="USD/bbl · USD/oz · yfinance BZ=F, GC=F" src="yfinance" height={160}>
               <ResponsiveContainer>
-                <ComposedChart data={D_BRENT.map((p,i)=>({d:p.d,brent:p.v,gold:D_GOLD[i]?.v}))}
+                <ComposedChart data={(() => { const gMap = Object.fromEntries(D_GOLD.map(p=>[p.d,p.v])); return D_BRENT.map(p=>({d:p.d,brent:p.v,gold:gMap[p.d]??null})); })()}
                   margin={{top:5,right:40,left:-15,bottom:0}}>
                   <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
                   <XAxis dataKey="d" tick={{fontSize:7,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={DAILY_INTERVAL} tickFormatter={dailyTick}/>
