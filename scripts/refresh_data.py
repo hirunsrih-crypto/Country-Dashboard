@@ -64,10 +64,10 @@ def read_jsx():
     return JSX_PATH.read_text(encoding="utf-8")
 
 # ── yfinance fetchers ─────────────────────────────────────────────────────────
-def fetch_yf_monthly(ticker, label, decimals=1):
-    """Download daily, resample to month-end, then append the latest
-    daily close if it belongs to a month newer than the last month-end
-    (i.e. we are mid-month and the current month isn't closed yet)."""
+def fetch_yf_daily(ticker, label, decimals=1):
+    """Download all daily closes since START_DATE.
+    Date label format: 'DD-MMM-YY'  e.g. '13-Mar-26'
+    Includes today's partial session so the chart is always current."""
     try:
         df = yf.download(ticker, start=START_DATE, interval="1d",
                          progress=False, auto_adjust=True)
@@ -75,24 +75,12 @@ def fetch_yf_monthly(ticker, label, decimals=1):
             raise ValueError("empty dataframe")
 
         close = df["Close"].dropna()
-        monthly = close.resample("ME").last().dropna()
-
         data = [
-            {"d": f"{MONTHS[d.month-1]}-{str(d.year)[2:]}",
+            {"d": f"{d.day:02d}-{MONTHS[d.month-1]}-{str(d.year)[2:]}",
              "v": round(float(v), decimals)}
-            for d, v in monthly.items()
+            for d, v in close.items()
         ]
-
-        # Append latest daily close if it's from the current (incomplete) month
-        latest_daily_date  = close.index[-1]
-        last_month_end     = monthly.index[-1]
-        if (latest_daily_date.year, latest_daily_date.month) > \
-           (last_month_end.year,    last_month_end.month):
-            latest_val = round(float(close.iloc[-1]), decimals)
-            latest_lbl = f"{MONTHS[latest_daily_date.month-1]}-{str(latest_daily_date.year)[2:]}"
-            data.append({"d": latest_lbl, "v": latest_val})
-
-        print(f"  ✓  {label:<22} {len(data)} months  (latest: {data[-1]['d']} = {data[-1]['v']})")
+        print(f"  ✓  {label:<22} {len(data)} days  (latest: {data[-1]['d']} = {data[-1]['v']})")
         return data
     except Exception as e:
         print(f"  ✗  {label}: {e}")
@@ -210,11 +198,11 @@ def main():
 
     # ── Fetch ──────────────────────────────────────────────────────────────
     print("[ yfinance ]")
-    nifty  = fetch_yf_monthly("^NSEI",       "Nifty 50",        0)
-    midcap = fetch_yf_monthly("^NSEMDCP100", "Nifty Midcap 100",0)
-    usdinr = fetch_yf_monthly("USDINR=X",    "USD/INR",         1)
-    brent  = fetch_yf_monthly("BZ=F",        "Brent Crude",     1)
-    gold   = fetch_yf_monthly("GC=F",        "Gold Spot",       0)
+    nifty  = fetch_yf_daily("^NSEI",       "Nifty 50",        0)
+    midcap = fetch_yf_daily("^NSEMDCP100", "Nifty Midcap 100",0)
+    usdinr = fetch_yf_daily("USDINR=X",    "USD/INR",         1)
+    brent  = fetch_yf_daily("BZ=F",        "Brent Crude",     1)
+    gold   = fetch_yf_daily("GC=F",        "Gold Spot",       0)
 
     print("\n[ MOSPI API ]")
     cpi = fetch_mospi_cpi()
