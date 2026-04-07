@@ -2211,6 +2211,7 @@ const D_CPI_MOSPI = [
   {d:"Jan-25",v:4.26},{d:"Feb-25",v:3.61},{d:"Mar-25",v:3.34},{d:"Apr-25",v:3.16},
   {d:"May-25",v:2.82},{d:"Jun-25",v:2.10},{d:"Jul-25",v:1.61},{d:"Aug-25",v:2.07},
   {d:"Sep-25",v:1.44},{d:"Oct-25",v:0.25},{d:"Nov-25",v:0.71},{d:"Dec-25",v:1.33},
+  {d:"Jan-26",v:2.75},{d:"Feb-26",v:3.21},
 ];
 
 // MOSPI IIP — General Index Growth Rate (base 2011-12, monthly YoY %)
@@ -2224,7 +2225,7 @@ const D_IIP_MOSPI = [
   {d:"Jan-25",v:5.2},{d:"Feb-25",v:2.7},{d:"Mar-25",v:3.9},{d:"Apr-25",v:2.6},
   {d:"May-25",v:1.9},{d:"Jun-25",v:1.5},{d:"Jul-25",v:4.3},{d:"Aug-25",v:4.1},
   {d:"Sep-25",v:4.6},{d:"Oct-25",v:0.5},{d:"Nov-25",v:7.2},{d:"Dec-25",v:8.0},
-  {d:"Jan-26",v:4.8},
+  {d:"Jan-26",v:4.8},{d:"Feb-26",v:5.2},
 ];
 
 const D_MFGPMI = [
@@ -2237,7 +2238,11 @@ const D_MFGPMI = [
   {d:"Jan-24",v:56.5},{d:"Feb-24",v:56.9},{d:"Mar-24",v:59.1},{d:"Apr-24",v:58.8},
   {d:"May-24",v:57.5},{d:"Jun-24",v:58.3},{d:"Jul-24",v:58.1},{d:"Aug-24",v:57.5},
   {d:"Sep-24",v:56.5},{d:"Oct-24",v:56.5},{d:"Nov-24",v:56.5},{d:"Dec-24",v:57.7},
-  {d:"Jan-25",v:57.7},{d:"Feb-25",v:56.3}
+  {d:"Jan-25",v:57.7},{d:"Feb-25",v:56.3},
+  {d:"Mar-25",v:58.1},{d:"Apr-25",v:58.2},{d:"May-25",v:57.6},{d:"Jun-25",v:58.4},
+  {d:"Jul-25",v:59.1},{d:"Aug-25",v:59.3},{d:"Sep-25",v:57.7},{d:"Oct-25",v:59.2},
+  {d:"Nov-25",v:56.6},{d:"Dec-25",v:55.0},
+  {d:"Jan-26",v:55.4},{d:"Feb-26",v:56.9},{d:"Mar-26",v:53.8}
 ];
 
 const D_SVSPMI = [
@@ -2250,7 +2255,11 @@ const D_SVSPMI = [
   {d:"Jan-24",v:61.8},{d:"Feb-24",v:60.6},{d:"Mar-24",v:61.2},{d:"Apr-24",v:60.8},
   {d:"May-24",v:60.2},{d:"Jun-24",v:60.5},{d:"Jul-24",v:60.3},{d:"Aug-24",v:60.9},
   {d:"Sep-24",v:57.7},{d:"Oct-24",v:58.5},{d:"Nov-24",v:58.4},{d:"Dec-24",v:59.3},
-  {d:"Jan-25",v:56.5},{d:"Feb-25",v:59.0}
+  {d:"Jan-25",v:56.5},{d:"Feb-25",v:59.0},
+  {d:"Mar-25",v:58.5},{d:"Apr-25",v:58.7},{d:"May-25",v:58.8},{d:"Jun-25",v:60.4},
+  {d:"Jul-25",v:60.5},{d:"Aug-25",v:62.9},{d:"Sep-25",v:60.9},{d:"Oct-25",v:58.9},
+  {d:"Nov-25",v:59.8},{d:"Dec-25",v:58.0},
+  {d:"Jan-26",v:58.5},{d:"Feb-26",v:58.1},{d:"Mar-26",v:57.5}
 ];
 
 const D_GST = [
@@ -2263,7 +2272,11 @@ const D_GST = [
   {d:"Jan-24",v:1.75},{d:"Feb-24",v:1.68},{d:"Mar-24",v:1.78},{d:"Apr-24",v:2.10},
   {d:"May-24",v:1.73},{d:"Jun-24",v:1.74},{d:"Jul-24",v:1.82},{d:"Aug-24",v:1.75},
   {d:"Sep-24",v:1.73},{d:"Oct-24",v:1.87},{d:"Nov-24",v:1.82},{d:"Dec-24",v:1.77},
-  {d:"Jan-25",v:1.96},{d:"Feb-25",v:1.84}
+  {d:"Jan-25",v:1.96},{d:"Feb-25",v:1.84},
+  {d:"Mar-25",v:1.96},{d:"Apr-25",v:2.37},{d:"May-25",v:2.01},{d:"Jun-25",v:1.85},
+  {d:"Jul-25",v:1.95},{d:"Aug-25",v:1.86},{d:"Sep-25",v:1.89},{d:"Oct-25",v:1.96},
+  {d:"Nov-25",v:1.70},{d:"Dec-25",v:1.75},
+  {d:"Jan-26",v:1.93},{d:"Feb-26",v:1.84},{d:"Mar-26",v:2.00}
 ];
 
 const D_REPO = [
@@ -2292,7 +2305,11 @@ const D_YIELD10Y = [
   {d:"Jan-24",v:7.17},{d:"Feb-24",v:7.08},{d:"Mar-24",v:7.04},{d:"Apr-24",v:7.13},
   {d:"May-24",v:7.01},{d:"Jun-24",v:6.95},{d:"Jul-24",v:6.94},{d:"Aug-24",v:6.86},
   {d:"Sep-24",v:6.75},{d:"Oct-24",v:6.84},{d:"Nov-24",v:6.79},{d:"Dec-24",v:6.76},
-  {d:"Jan-25",v:6.69},{d:"Feb-25",v:6.67}
+  {d:"Jan-25",v:6.69},{d:"Feb-25",v:6.67},
+  {d:"Mar-25",v:6.63},{d:"Apr-25",v:6.52},{d:"May-25",v:6.42},{d:"Jun-25",v:6.37},
+  {d:"Jul-25",v:6.31},{d:"Aug-25",v:6.27},{d:"Sep-25",v:6.24},{d:"Oct-25",v:6.35},
+  {d:"Nov-25",v:6.52},{d:"Dec-25",v:6.63},
+  {d:"Jan-26",v:6.75},{d:"Feb-26",v:6.85},{d:"Mar-26",v:6.95}
 ];
 
 const D_FII = [
@@ -2305,7 +2322,11 @@ const D_FII = [
   {d:"Jan-24",v:-0.9},{d:"Feb-24",v:0.4},{d:"Mar-24",v:3.0},{d:"Apr-24",v:-1.6},
   {d:"May-24",v:3.2},{d:"Jun-24",v:2.6},{d:"Jul-24",v:3.2},{d:"Aug-24",v:0.9},
   {d:"Sep-24",v:0.6},{d:"Oct-24",v:-10.3},{d:"Nov-24",v:-2.9},{d:"Dec-24",v:-1.3},
-  {d:"Jan-25",v:-8.0},{d:"Feb-25",v:-1.1}
+  {d:"Jan-25",v:-8.0},{d:"Feb-25",v:-1.1},
+  {d:"Mar-25",v:-0.5},{d:"Apr-25",v:0.5},{d:"May-25",v:2.3},{d:"Jun-25",v:1.7},
+  {d:"Jul-25",v:-2.1},{d:"Aug-25",v:-4.0},{d:"Sep-25",v:-2.7},{d:"Oct-25",v:1.7},
+  {d:"Nov-25",v:-0.4},{d:"Dec-25",v:-2.7},
+  {d:"Jan-26",v:-4.2},{d:"Feb-26",v:2.5},{d:"Mar-26",v:-12.3}
 ];
 
 const D_USDINR = [
@@ -3427,7 +3448,11 @@ const D_FXRES = [
   {d:"Jan-24",v:617},{d:"Feb-24",v:619},{d:"Mar-24",v:646},{d:"Apr-24",v:643},
   {d:"May-24",v:651},{d:"Jun-24",v:653},{d:"Jul-24",v:669},{d:"Aug-24",v:683},
   {d:"Sep-24",v:705},{d:"Oct-24",v:684},{d:"Nov-24",v:657},{d:"Dec-24",v:641},
-  {d:"Jan-25",v:630},{d:"Feb-25",v:623}
+  {d:"Jan-25",v:630},{d:"Feb-25",v:623},
+  {d:"Mar-25",v:655},{d:"Apr-25",v:663},{d:"May-25",v:674},{d:"Jun-25",v:680},
+  {d:"Jul-25",v:698},{d:"Aug-25",v:685},{d:"Sep-25",v:700},{d:"Oct-25",v:695},
+  {d:"Nov-25",v:693},{d:"Dec-25",v:689},
+  {d:"Jan-26",v:705},{d:"Feb-26",v:725},{d:"Mar-26",v:688}
 ];
 
 // Brent Crude — yfinance BZ=F (USD/bbl, monthly close)
@@ -5593,6 +5618,10 @@ const D_PEERS_FWD_PE = [
   {d:"Oct-24",india:22.5,midcap100:34.8,msciEM:13.5,msciChina:12.8,sp500:21.8},
   {d:"Jan-25",india:21.8,midcap100:31.2,msciEM:14.2,msciChina:13.2,sp500:22.5},
   {d:"Feb-25",india:20.9,midcap100:29.8,msciEM:14.5,msciChina:13.8,sp500:21.8},
+  {d:"May-25",india:21.5,midcap100:28.5,msciEM:15.2,msciChina:14.5,sp500:22.8},
+  {d:"Aug-25",india:22.8,midcap100:30.1,msciEM:14.8,msciChina:13.8,sp500:23.5},
+  {d:"Nov-25",india:21.2,midcap100:27.8,msciEM:14.2,msciChina:13.2,sp500:22.1},
+  {d:"Feb-26",india:18.5,midcap100:24.2,msciEM:13.5,msciChina:11.8,sp500:19.8},
 ];
 
 // Forward EPS — Bloomberg★ (trailing EPS for EM/China from MSCI fact sheets)
@@ -5611,6 +5640,10 @@ const D_PEERS_FWD_EPS = [
   {d:"Oct-24",india:1165,midcap100:820,msciEM:135,msciChina:62},
   {d:"Jan-25",india:1185,midcap100:838,msciEM:138,msciChina:65},
   {d:"Feb-25",india:1192,midcap100:842,msciEM:140,msciChina:66},
+  {d:"May-25",india:1225,midcap100:872,msciEM:145,msciChina:69},
+  {d:"Aug-25",india:1268,midcap100:905,msciEM:150,msciChina:72},
+  {d:"Nov-25",india:1295,midcap100:928,msciEM:155,msciChina:75},
+  {d:"Feb-26",india:1248,midcap100:895,msciEM:152,msciChina:73},
 ];
 
 // Mirae fund holdings with performance vs Nifty Midcap 100 benchmark
@@ -5633,7 +5666,7 @@ const MIRAE_HOLDINGS = [
 ];
 
 // Nifty Midcap 100 benchmark returns (^NSEMDCP100 · yfinance)
-const MIDCAP100_BENCHMARK = { perf1m:-5.1, perf3m:-12.8, perf1y:-4.8 };
+const MIDCAP100_BENCHMARK = { perf1m:-5.1, perf3m:-9.7, perf1y:5.6 };
 
 // niftyMidcapWt = Nifty Midcap 100 sector weights (benchmark for Mirae fund)
 const MIRAE_SECTORS = [
