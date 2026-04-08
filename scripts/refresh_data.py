@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 """
-India Dashboard v6 — Weekly Data Refresh
+India Dashboard v6 - Weekly Data Refresh
 =========================================
 Auto-refreshes the following D_* arrays in india-dashboard-v6.jsx:
 
   AUTO (this script):
-    D_NIFTY, D_MIDCAP, D_USDINR, D_BRENT, D_GOLD  — yfinance
-    D_CPI_MOSPI, D_IIP_MOSPI, D_GDP                — MOSPI public API
+    D_NIFTY, D_MIDCAP, D_USDINR, D_BRENT, D_GOLD  - yfinance
+    D_CPI_MOSPI, D_IIP_MOSPI, D_GDP                - MOSPI public API
 
   MANUAL (update in JSX directly):
-    D_REPO, D_YIELD10Y, D_FXRES  — RBI DBIE (CORS-blocked)
-    D_FII                         — NSDL (no public API)
-    D_MFGPMI, D_SVSPMI           — S&P Global PDF release
-    D_GST                         — GST Council PDF
-    D_PEERS_FWD_PE, D_PEERS_FWD_EPS — Bloomberg terminal
+    D_REPO, D_YIELD10Y, D_FXRES  - RBI DBIE (CORS-blocked)
+    D_FII                         - NSDL (no public API)
+    D_MFGPMI, D_SVSPMI           - S&P Global PDF release
+    D_GST                         - GST Council PDF
+    D_PEERS_FWD_PE, D_PEERS_FWD_EPS - Bloomberg terminal
 
 Usage:
     pip install yfinance requests pandas
@@ -54,7 +54,7 @@ def patch_array(jsx_content, var_name, new_js_body):
     replacement = new_js_body
     updated, n = re.subn(pattern, replacement, jsx_content)
     if n == 0:
-        print(f"  ⚠  {var_name}: pattern not found — skipped")
+        print(f"  WARN  {var_name}: pattern not found - skipped")
     return updated
 
 def write_jsx(content):
@@ -84,10 +84,10 @@ def fetch_yf_daily(ticker, label, decimals=1):
              "v": round(float(v), decimals)}
             for d, v in close.items()
         ]
-        print(f"  ✓  {label:<22} {len(data)} days  (latest: {data[-1]['d']} = {data[-1]['v']})")
+        print(f"  OK {label:<22} {len(data)} days  (latest: {data[-1]['d']} = {data[-1]['v']})")
         return data
     except Exception as e:
-        print(f"  ✗  {label}: {e}")
+        print(f"  FAIL {label}: {e}")
         return None
 
 def build_simple_array(var_name, data):
@@ -118,10 +118,10 @@ def fetch_mospi_cpi():
              "v": round(float(rec["inflation"]), 2)}
             for rec in records
         ]
-        print(f"  ✓  {'CPI (MOSPI)':<22} {len(data)} months  (latest: {data[-1]['d']} = {data[-1]['v']}%)")
+        print(f"  OK  {'CPI (MOSPI)':<22} {len(data)} months  (latest: {data[-1]['d']} = {data[-1]['v']}%)")
         return data
     except Exception as e:
-        print(f"  ✗  CPI (MOSPI): {e}")
+        print(f"  FAIL  CPI (MOSPI): {e}")
         return None
 
 def fetch_mospi_iip():
@@ -146,10 +146,10 @@ def fetch_mospi_iip():
              "v": round(float(rec["growth_rate"]), 1)}
             for rec in records
         ]
-        print(f"  ✓  {'IIP (MOSPI)':<22} {len(data)} months  (latest: {data[-1]['d']} = {data[-1]['v']}%)")
+        print(f"  OK  {'IIP (MOSPI)':<22} {len(data)} months  (latest: {data[-1]['d']} = {data[-1]['v']}%)")
         return data
     except Exception as e:
-        print(f"  ✗  IIP (MOSPI): {e}")
+        print(f"  FAIL  IIP (MOSPI): {e}")
         return None
 
 def fetch_mospi_gdp():
@@ -182,21 +182,21 @@ def fetch_mospi_gdp():
             label    = f"{q} {fy_short}"
             v        = round(float(rec["constant_price"]), 1)
             data.append({"d": label, "v": v, "fy": rec["year"], "q": q})
-        print(f"  ✓  {'GDP (MOSPI NAS)':<22} {len(data)} quarters (latest: {data[-1]['d']} = {data[-1]['v']}%)")
+        print(f"  OK  {'GDP (MOSPI NAS)':<22} {len(data)} quarters (latest: {data[-1]['d']} = {data[-1]['v']}%)")
         return data
     except Exception as e:
-        print(f"  ✗  GDP (MOSPI NAS): {e}")
+        print(f"  FAIL  GDP (MOSPI NAS): {e}")
         return None
 
 def build_gdp_array(data):
     rows = [f'  {{d:"{r["d"]}",v:{r["v"]},fy:"{r["fy"]}",q:"{r["q"]}"}}' for r in data]
-    return "const D_GDP = [\n  // MOSPI NAS — Quarterly GDP Growth Rate (Constant Price, base 2022-23)\n" + ",\n".join(rows) + "\n];"
+    return "const D_GDP = [\n  // MOSPI NAS - Quarterly GDP Growth Rate (Constant Price, base 2022-23)\n" + ",\n".join(rows) + "\n];"
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     print(f"\n{'='*60}")
-    print(f"  India Dashboard — Weekly Data Refresh")
+    print(f"  India Dashboard - Weekly Data Refresh")
     print(f"  {now}")
     print(f"{'='*60}\n")
 
@@ -232,16 +232,16 @@ def main():
     for var_name, data, new_body in patches:
         if new_body:
             jsx = patch_array(jsx, var_name, new_body)
-            print(f"  ✓  {var_name} patched")
+            print(f"  OK  {var_name} patched")
             changed += 1
         else:
             print(f"  –  {var_name} skipped (fetch failed, keeping existing)")
 
     if changed:
         write_jsx(jsx)
-        print(f"\n✅  {changed} arrays updated in {JSX_PATH.name}")
+        print(f"\nDONE  {changed} arrays updated in {JSX_PATH.name}")
     else:
-        print("\n⚠  No arrays updated.")
+        print("\nWARN  No arrays updated.")
         sys.exit(1)
 
     print(f"\n{'='*60}\n")
