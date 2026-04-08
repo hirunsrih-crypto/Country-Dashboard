@@ -87,6 +87,26 @@ function filterRange(data, range) {
 }
 const RANGES = ["1W","1M","3M","6M","1Y","ALL"];
 
+// Helper: aggregate daily closes [{d,v}] → weekly OHLC candlestick data
+function buildOHLC(data) {
+  const buckets = {};
+  data.forEach(pt => {
+    const date = parseChartDate(pt.d);
+    const mon = new Date(date);
+    mon.setDate(date.getDate() - ((date.getDay() + 6) % 7));
+    const key = mon.toISOString().slice(0, 10);
+    if (!buckets[key]) {
+      buckets[key] = { d: pt.d, open: pt.v, high: pt.v, low: pt.v, close: pt.v, _key: key };
+    } else {
+      if (pt.v > buckets[key].high) buckets[key].high = pt.v;
+      if (pt.v < buckets[key].low)  buckets[key].low  = pt.v;
+      buckets[key].close = pt.v;
+      buckets[key].d = pt.d;
+    }
+  });
+  return Object.values(buckets).sort((a, b) => a._key < b._key ? -1 : 1);
+}
+
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const D_NIFTY = [
   {d:"03-Jan-22",v:17626.0},
@@ -6376,21 +6396,54 @@ export default function IndiaDashboardV5() {
             <Kpi T={T} label="FII Flows Feb-25" value={fiilast} unit="B USD" color={fiilast>=0?T.green:T.red} src="NSDL"/>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:14}}>
-            <RangeChart T={T} title="Nifty 50 vs Midcap 100 — Normalized" sub="yfinance ^NSEI, ^NSEMDCP100 · rebased to range start = 100" src="yfinance" height={220} defaultRange="1Y" render={range => {
-              const nBase = filterRange(D_NIFTY, range); const mBase = filterRange(D_MIDCAP, range);
-              const n0 = nBase[0]?.v||1, m0 = mBase[0]?.v||1;
-              const gMap = Object.fromEntries(mBase.map(p=>[p.d,p.v]));
-              const data = nBase.map(p=>({d:p.d,nifty:+(p.v/n0*100).toFixed(1),midcap:gMap[p.d]!=null?+(gMap[p.d]/m0*100).toFixed(1):null}));
+            <RangeChart T={T} title="Nifty 50 vs Midcap 100 — Candlestick" sub="yfinance ^NSEI · weekly OHLC · Midcap 100 overlay (R)" src="yfinance" height={220} defaultRange="1Y" render={range => {
+              const nRaw = filterRange(D_NIFTY, range);
+              const mRaw = filterRange(D_MIDCAP, range);
+              const candles = buildOHLC(nRaw);
+              const mMap = Object.fromEntries(mRaw.map(p=>[p.d,p.v]));
+              const data = candles.map(c => ({
+                d: c.d,
+                wick: [c.low, c.high],
+                body: [Math.min(c.open, c.close), Math.max(c.open, c.close)],
+                open: c.open, high: c.high, low: c.low, close: c.close,
+                up: c.close >= c.open,
+                midcap: mMap[c.d] ?? null,
+              }));
               const iv = RANGE_INTERVAL[range];
-              return (<ResponsiveContainer><LineChart data={data} margin={{top:5,right:10,left:-15,bottom:0}}>
-                <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
-                <XAxis dataKey="d" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={iv} tickFormatter={dailyTick}/>
-                <YAxis tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false}/>
-                <Tooltip content={(p)=><TT {...p} T={T}/>}/>
-                <Line dataKey="nifty" name="Nifty 50" stroke={T.accent} strokeWidth={2} dot={range==="1W"} dotRadius={3}/>
-                <Line dataKey="midcap" name="Midcap 100" stroke={T.orange} strokeWidth={2} dot={range==="1W"} dotRadius={3} strokeDasharray="5 2"/>
-                <Legend wrapperStyle={{fontSize:9,fontFamily:MONO}}/>
-              </LineChart></ResponsiveContainer>);
+              const kFmt = v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v;
+              return (
+                <ResponsiveContainer>
+                  <ComposedChart data={data} margin={{top:5,right:38,left:-10,bottom:0}}>
+                    <CartesianGrid stroke={T.grid} strokeDasharray="3 3" vertical={false}/>
+                    <XAxis dataKey="d" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} interval={iv} tickFormatter={dailyTick}/>
+                    <YAxis yAxisId="n" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={["auto","auto"]} tickFormatter={kFmt}/>
+                    <YAxis yAxisId="m" orientation="right" tick={{fontSize:8,fill:T.muted,fontFamily:MONO}} tickLine={false} axisLine={false} domain={["auto","auto"]} tickFormatter={kFmt}/>
+                    <Tooltip content={(p) => {
+                      if (!p.active || !p.payload?.length) return null;
+                      const row = p.payload[0]?.payload;
+                      if (!row) return null;
+                      return (
+                        <div style={{background:T.tooltipBg,border:`1px solid ${T.border}`,borderRadius:6,padding:"6px 10px",fontSize:10,fontFamily:MONO,color:T.text}}>
+                          <div style={{color:T.muted,marginBottom:3}}>{row.d}</div>
+                          <div>O <span style={{color:T.accent}}>{row.open?.toLocaleString()}</span></div>
+                          <div>H <span style={{color:T.green}}>{row.high?.toLocaleString()}</span></div>
+                          <div>L <span style={{color:T.red}}>{row.low?.toLocaleString()}</span></div>
+                          <div>C <span style={{color:row.up?T.green:T.red}}>{row.close?.toLocaleString()}</span></div>
+                          {row.midcap != null && <div style={{color:T.orange,marginTop:3}}>Midcap {row.midcap?.toLocaleString()}</div>}
+                        </div>
+                      );
+                    }}/>
+                    <Bar yAxisId="n" dataKey="wick" barSize={1} isAnimationActive={false} name="Nifty Wick" legendType="none">
+                      {data.map((d,i) => <Cell key={i} fill={d.up ? T.green : T.red}/>)}
+                    </Bar>
+                    <Bar yAxisId="n" dataKey="body" barSize={6} isAnimationActive={false} name="Nifty 50">
+                      {data.map((d,i) => <Cell key={i} fill={d.up ? T.green : T.red} fillOpacity={d.up ? 0.85 : 1}/>)}
+                    </Bar>
+                    <Line yAxisId="m" dataKey="midcap" name="Midcap 100" stroke={T.orange} strokeWidth={1.5} dot={false} isAnimationActive={false}/>
+                    <Legend wrapperStyle={{fontSize:9,fontFamily:MONO}} formatter={v => v === "midcap" ? "Midcap 100 (R)" : v}/>
+                  </ComposedChart>
+                </ResponsiveContainer>
+              );
             }}/>
             <CT T={T} title="Mfg + Svcs PMI" sub="S&P Global free release" src="S&P Global" height={220}>
               <ResponsiveContainer>
